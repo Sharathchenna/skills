@@ -1,0 +1,10 @@
+[
+  {"id": "hook",   "text": "The animal didn't cross the street because it was too tired. You knew instantly: it means the animal. For a machine, that was the hard part."},
+  {"id": "james",  "text": "In 1890, the psychologist William James wrote: everyone knows what attention is. For computers, nobody knew how to build it."},
+  {"id": "paper",  "text": "In 2017, a team at Google showed that attention alone was enough. Their paper was called: Attention Is All You Need."},
+  {"id": "match",  "text": "Here's how it works. The word it sends out a question. Every other word holds up a label. The better the match, the brighter the thread."},
+  {"id": "weights","text": "The scores become shares that add up to one hundred percent. So it borrows most of its meaning from animal."},
+  {"id": "twist",  "text": "Now change one word. Too wide. The threads swing to the street. Same word, new meaning, and the model gets both right."},
+  {"id": "scale",  "text": "And every word does this with every other word, all at once. A thousand words means a million comparisons, in every layer."},
+  {"id": "end",    "text": "That's attention. Every word, asking every other word: are you the one I need?"}
+]

@@ -1,0 +1,1246 @@
+{
+ "total": 76.12,
+ "scenes": [
+  {
+   "id": "hook",
+   "start": 0.0,
+   "length": 10.26,
+   "voiceAt": 0.4,
+   "voiceDur": 9.45
+  },
+  {
+   "id": "james",
+   "start": 10.26,
+   "length": 9.65,
+   "voiceAt": 0.35,
+   "voiceDur": 8.88
+  },
+  {
+   "id": "paper",
+   "start": 19.91,
+   "length": 9.41,
+   "voiceAt": 0.35,
+   "voiceDur": 8.68
+  },
+  {
+   "id": "match",
+   "start": 29.32,
+   "length": 10.37,
+   "voiceAt": 0.35,
+   "voiceDur": 9.55
+  },
+  {
+   "id": "weights",
+   "start": 39.69,
+   "length": 7.23,
+   "voiceAt": 0.35,
+   "voiceDur": 6.56
+  },
+  {
+   "id": "twist",
+   "start": 46.92,
+   "length": 9.77,
+   "voiceAt": 0.35,
+   "voiceDur": 9.14
+  },
+  {
+   "id": "scale",
+   "start": 56.69,
+   "length": 9.85,
+   "voiceAt": 0.35,
+   "voiceDur": 8.52
+  },
+  {
+   "id": "end",
+   "start": 66.54,
+   "length": 9.58,
+   "voiceAt": 0.35,
+   "voiceDur": 6.3
+  }
+ ],
+ "words": [
+  {
+   "scene": "hook",
+   "i": 0,
+   "text": "The",
+   "start": 0.54,
+   "end": 0.59
+  },
+  {
+   "scene": "hook",
+   "i": 1,
+   "text": "animal",
+   "start": 0.59,
+   "end": 0.97
+  },
+  {
+   "scene": "hook",
+   "i": 2,
+   "text": "didn't",
+   "start": 0.97,
+   "end": 1.32
+  },
+  {
+   "scene": "hook",
+   "i": 3,
+   "text": "cross",
+   "start": 1.46,
+   "end": 1.64
+  },
+  {
+   "scene": "hook",
+   "i": 4,
+   "text": "the",
+   "start": 1.73,
+   "end": 1.85
+  },
+  {
+   "scene": "hook",
+   "i": 5,
+   "text": "street",
+   "start": 1.85,
+   "end": 2.14
+  },
+  {
+   "scene": "hook",
+   "i": 6,
+   "text": "because",
+   "start": 2.24,
+   "end": 2.68
+  },
+  {
+   "scene": "hook",
+   "i": 7,
+   "text": "it",
+   "start": 2.68,
+   "end": 2.79
+  },
+  {
+   "scene": "hook",
+   "i": 8,
+   "text": "was",
+   "start": 2.8,
+   "end": 2.97
+  },
+  {
+   "scene": "hook",
+   "i": 9,
+   "text": "too",
+   "start": 3.02,
+   "end": 3.18
+  },
+  {
+   "scene": "hook",
+   "i": 10,
+   "text": "tired.",
+   "start": 3.18,
+   "end": 3.66
+  },
+  {
+   "scene": "hook",
+   "i": 11,
+   "text": "You",
+   "start": 3.92,
+   "end": 4.08
+  },
+  {
+   "scene": "hook",
+   "i": 12,
+   "text": "knew",
+   "start": 4.08,
+   "end": 4.39
+  },
+  {
+   "scene": "hook",
+   "i": 13,
+   "text": "instantly.",
+   "start": 4.39,
+   "end": 5.58
+  },
+  {
+   "scene": "hook",
+   "i": 14,
+   "text": "It",
+   "start": 5.58,
+   "end": 5.67
+  },
+  {
+   "scene": "hook",
+   "i": 15,
+   "text": "means",
+   "start": 5.74,
+   "end": 6.08
+  },
+  {
+   "scene": "hook",
+   "i": 16,
+   "text": "the",
+   "start": 6.22,
+   "end": 6.32
+  },
+  {
+   "scene": "hook",
+   "i": 17,
+   "text": "animal.",
+   "start": 6.32,
+   "end": 7.0
+  },
+  {
+   "scene": "hook",
+   "i": 18,
+   "text": "For",
+   "start": 7.14,
+   "end": 7.26
+  },
+  {
+   "scene": "hook",
+   "i": 19,
+   "text": "a",
+   "start": 7.26,
+   "end": 7.32
+  },
+  {
+   "scene": "hook",
+   "i": 20,
+   "text": "machine,",
+   "start": 7.41,
+   "end": 8.0
+  },
+  {
+   "scene": "hook",
+   "i": 21,
+   "text": "that",
+   "start": 8.06,
+   "end": 8.36
+  },
+  {
+   "scene": "hook",
+   "i": 22,
+   "text": "was",
+   "start": 8.36,
+   "end": 8.6
+  },
+  {
+   "scene": "hook",
+   "i": 23,
+   "text": "the",
+   "start": 8.6,
+   "end": 8.84
+  },
+  {
+   "scene": "hook",
+   "i": 24,
+   "text": "hard",
+   "start": 8.84,
+   "end": 9.08
+  },
+  {
+   "scene": "hook",
+   "i": 25,
+   "text": "part.",
+   "start": 9.16,
+   "end": 9.76
+  },
+  {
+   "scene": "james",
+   "i": 0,
+   "text": "In",
+   "start": 10.76,
+   "end": 10.76
+  },
+  {
+   "scene": "james",
+   "i": 1,
+   "text": "1890,",
+   "start": 10.76,
+   "end": 11.79
+  },
+  {
+   "scene": "james",
+   "i": 2,
+   "text": "the",
+   "start": 11.79,
+   "end": 12.18
+  },
+  {
+   "scene": "james",
+   "i": 3,
+   "text": "psychologist",
+   "start": 12.18,
+   "end": 12.94
+  },
+  {
+   "scene": "james",
+   "i": 4,
+   "text": "William",
+   "start": 13.02,
+   "end": 13.54
+  },
+  {
+   "scene": "james",
+   "i": 5,
+   "text": "James",
+   "start": 13.54,
+   "end": 13.92
+  },
+  {
+   "scene": "james",
+   "i": 6,
+   "text": "wrote,",
+   "start": 13.92,
+   "end": 14.41
+  },
+  {
+   "scene": "james",
+   "i": 7,
+   "text": "everyone",
+   "start": 14.64,
+   "end": 15.11
+  },
+  {
+   "scene": "james",
+   "i": 8,
+   "text": "knows",
+   "start": 15.11,
+   "end": 15.47
+  },
+  {
+   "scene": "james",
+   "i": 9,
+   "text": "what",
+   "start": 15.49,
+   "end": 15.67
+  },
+  {
+   "scene": "james",
+   "i": 10,
+   "text": "attention",
+   "start": 16.06,
+   "end": 16.51
+  },
+  {
+   "scene": "james",
+   "i": 11,
+   "text": "is.",
+   "start": 16.51,
+   "end": 16.69
+  },
+  {
+   "scene": "james",
+   "i": 12,
+   "text": "For",
+   "start": 16.84,
+   "end": 16.91
+  },
+  {
+   "scene": "james",
+   "i": 13,
+   "text": "computers,",
+   "start": 16.91,
+   "end": 17.71
+  },
+  {
+   "scene": "james",
+   "i": 14,
+   "text": "nobody",
+   "start": 17.71,
+   "end": 17.88
+  },
+  {
+   "scene": "james",
+   "i": 15,
+   "text": "knew",
+   "start": 18.26,
+   "end": 18.45
+  },
+  {
+   "scene": "james",
+   "i": 16,
+   "text": "how",
+   "start": 18.45,
+   "end": 18.66
+  },
+  {
+   "scene": "james",
+   "i": 17,
+   "text": "to",
+   "start": 18.66,
+   "end": 18.8
+  },
+  {
+   "scene": "james",
+   "i": 18,
+   "text": "build",
+   "start": 18.8,
+   "end": 19.16
+  },
+  {
+   "scene": "james",
+   "i": 19,
+   "text": "it.",
+   "start": 19.16,
+   "end": 19.41
+  },
+  {
+   "scene": "paper",
+   "i": 0,
+   "text": "In",
+   "start": 20.39,
+   "end": 20.43
+  },
+  {
+   "scene": "paper",
+   "i": 1,
+   "text": "2017,",
+   "start": 20.43,
+   "end": 21.59
+  },
+  {
+   "scene": "paper",
+   "i": 2,
+   "text": "a",
+   "start": 21.59,
+   "end": 22.06
+  },
+  {
+   "scene": "paper",
+   "i": 3,
+   "text": "team",
+   "start": 22.06,
+   "end": 22.09
+  },
+  {
+   "scene": "paper",
+   "i": 4,
+   "text": "at",
+   "start": 22.09,
+   "end": 22.26
+  },
+  {
+   "scene": "paper",
+   "i": 5,
+   "text": "Google",
+   "start": 22.26,
+   "end": 22.79
+  },
+  {
+   "scene": "paper",
+   "i": 6,
+   "text": "showed",
+   "start": 22.79,
+   "end": 23.37
+  },
+  {
+   "scene": "paper",
+   "i": 7,
+   "text": "that",
+   "start": 23.37,
+   "end": 23.59
+  },
+  {
+   "scene": "paper",
+   "i": 8,
+   "text": "attention",
+   "start": 23.59,
+   "end": 24.06
+  },
+  {
+   "scene": "paper",
+   "i": 9,
+   "text": "alone",
+   "start": 24.06,
+   "end": 24.32
+  },
+  {
+   "scene": "paper",
+   "i": 10,
+   "text": "was",
+   "start": 24.32,
+   "end": 24.48
+  },
+  {
+   "scene": "paper",
+   "i": 11,
+   "text": "enough.",
+   "start": 24.48,
+   "end": 24.95
+  },
+  {
+   "scene": "paper",
+   "i": 12,
+   "text": "Their",
+   "start": 24.95,
+   "end": 25.75
+  },
+  {
+   "scene": "paper",
+   "i": 13,
+   "text": "paper",
+   "start": 25.75,
+   "end": 26.13
+  },
+  {
+   "scene": "paper",
+   "i": 14,
+   "text": "was",
+   "start": 26.18,
+   "end": 26.46
+  },
+  {
+   "scene": "paper",
+   "i": 15,
+   "text": "called,",
+   "start": 26.48,
+   "end": 27.35
+  },
+  {
+   "scene": "paper",
+   "i": 16,
+   "text": "Attention",
+   "start": 27.43,
+   "end": 27.94
+  },
+  {
+   "scene": "paper",
+   "i": 17,
+   "text": "is",
+   "start": 28.07,
+   "end": 28.1
+  },
+  {
+   "scene": "paper",
+   "i": 18,
+   "text": "All",
+   "start": 28.1,
+   "end": 28.3
+  },
+  {
+   "scene": "paper",
+   "i": 19,
+   "text": "You",
+   "start": 28.3,
+   "end": 28.5
+  },
+  {
+   "scene": "paper",
+   "i": 20,
+   "text": "Need.",
+   "start": 28.5,
+   "end": 28.82
+  },
+  {
+   "scene": "match",
+   "i": 0,
+   "text": "Here's",
+   "start": 29.82,
+   "end": 30.32
+  },
+  {
+   "scene": "match",
+   "i": 1,
+   "text": "how",
+   "start": 30.32,
+   "end": 30.64
+  },
+  {
+   "scene": "match",
+   "i": 2,
+   "text": "it",
+   "start": 30.64,
+   "end": 30.87
+  },
+  {
+   "scene": "match",
+   "i": 3,
+   "text": "works.",
+   "start": 30.87,
+   "end": 31.61
+  },
+  {
+   "scene": "match",
+   "i": 4,
+   "text": "The",
+   "start": 31.61,
+   "end": 31.79
+  },
+  {
+   "scene": "match",
+   "i": 5,
+   "text": "word",
+   "start": 31.79,
+   "end": 32.03
+  },
+  {
+   "scene": "match",
+   "i": 6,
+   "text": "it",
+   "start": 32.03,
+   "end": 32.14
+  },
+  {
+   "scene": "match",
+   "i": 7,
+   "text": "sends",
+   "start": 32.15,
+   "end": 32.45
+  },
+  {
+   "scene": "match",
+   "i": 8,
+   "text": "out",
+   "start": 32.45,
+   "end": 32.6
+  },
+  {
+   "scene": "match",
+   "i": 9,
+   "text": "a",
+   "start": 32.63,
+   "end": 32.69
+  },
+  {
+   "scene": "match",
+   "i": 10,
+   "text": "question.",
+   "start": 32.69,
+   "end": 33.3
+  },
+  {
+   "scene": "match",
+   "i": 11,
+   "text": "Every",
+   "start": 34.1,
+   "end": 34.39
+  },
+  {
+   "scene": "match",
+   "i": 12,
+   "text": "other",
+   "start": 34.39,
+   "end": 34.52
+  },
+  {
+   "scene": "match",
+   "i": 13,
+   "text": "word",
+   "start": 34.55,
+   "end": 34.95
+  },
+  {
+   "scene": "match",
+   "i": 14,
+   "text": "holds",
+   "start": 34.95,
+   "end": 35.33
+  },
+  {
+   "scene": "match",
+   "i": 15,
+   "text": "up",
+   "start": 35.36,
+   "end": 35.49
+  },
+  {
+   "scene": "match",
+   "i": 16,
+   "text": "a",
+   "start": 35.56,
+   "end": 35.59
+  },
+  {
+   "scene": "match",
+   "i": 17,
+   "text": "label.",
+   "start": 35.59,
+   "end": 36.2
+  },
+  {
+   "scene": "match",
+   "i": 18,
+   "text": "The",
+   "start": 36.62,
+   "end": 36.66
+  },
+  {
+   "scene": "match",
+   "i": 19,
+   "text": "better",
+   "start": 36.66,
+   "end": 37.04
+  },
+  {
+   "scene": "match",
+   "i": 20,
+   "text": "the",
+   "start": 37.04,
+   "end": 37.16
+  },
+  {
+   "scene": "match",
+   "i": 21,
+   "text": "match,",
+   "start": 37.26,
+   "end": 37.67
+  },
+  {
+   "scene": "match",
+   "i": 22,
+   "text": "the",
+   "start": 37.67,
+   "end": 37.73
+  },
+  {
+   "scene": "match",
+   "i": 23,
+   "text": "brighter",
+   "start": 38.3,
+   "end": 38.37
+  },
+  {
+   "scene": "match",
+   "i": 24,
+   "text": "the",
+   "start": 38.37,
+   "end": 38.56
+  },
+  {
+   "scene": "match",
+   "i": 25,
+   "text": "thread.",
+   "start": 38.56,
+   "end": 39.19
+  },
+  {
+   "scene": "weights",
+   "i": 0,
+   "text": "The",
+   "start": 40.17,
+   "end": 40.3
+  },
+  {
+   "scene": "weights",
+   "i": 1,
+   "text": "scores",
+   "start": 40.3,
+   "end": 40.82
+  },
+  {
+   "scene": "weights",
+   "i": 2,
+   "text": "become",
+   "start": 40.82,
+   "end": 41.34
+  },
+  {
+   "scene": "weights",
+   "i": 3,
+   "text": "shares",
+   "start": 41.34,
+   "end": 41.78
+  },
+  {
+   "scene": "weights",
+   "i": 4,
+   "text": "that",
+   "start": 41.9,
+   "end": 42.15
+  },
+  {
+   "scene": "weights",
+   "i": 5,
+   "text": "add",
+   "start": 42.31,
+   "end": 42.46
+  },
+  {
+   "scene": "weights",
+   "i": 6,
+   "text": "up",
+   "start": 42.46,
+   "end": 42.63
+  },
+  {
+   "scene": "weights",
+   "i": 7,
+   "text": "to",
+   "start": 42.63,
+   "end": 42.8
+  },
+  {
+   "scene": "weights",
+   "i": 8,
+   "text": "100%,",
+   "start": 42.8,
+   "end": 43.83
+  },
+  {
+   "scene": "weights",
+   "i": 9,
+   "text": "so",
+   "start": 44.01,
+   "end": 44.07
+  },
+  {
+   "scene": "weights",
+   "i": 10,
+   "text": "it",
+   "start": 44.08,
+   "end": 44.27
+  },
+  {
+   "scene": "weights",
+   "i": 11,
+   "text": "borrows",
+   "start": 44.39,
+   "end": 44.68
+  },
+  {
+   "scene": "weights",
+   "i": 12,
+   "text": "most",
+   "start": 44.68,
+   "end": 44.92
+  },
+  {
+   "scene": "weights",
+   "i": 13,
+   "text": "of",
+   "start": 44.92,
+   "end": 45.02
+  },
+  {
+   "scene": "weights",
+   "i": 14,
+   "text": "its",
+   "start": 45.1,
+   "end": 45.22
+  },
+  {
+   "scene": "weights",
+   "i": 15,
+   "text": "meaning",
+   "start": 45.22,
+   "end": 45.63
+  },
+  {
+   "scene": "weights",
+   "i": 16,
+   "text": "from",
+   "start": 45.63,
+   "end": 45.78
+  },
+  {
+   "scene": "weights",
+   "i": 17,
+   "text": "animal.",
+   "start": 45.88,
+   "end": 46.42
+  },
+  {
+   "scene": "twist",
+   "i": 0,
+   "text": "Now",
+   "start": 47.42,
+   "end": 47.53
+  },
+  {
+   "scene": "twist",
+   "i": 1,
+   "text": "change",
+   "start": 47.53,
+   "end": 48.05
+  },
+  {
+   "scene": "twist",
+   "i": 2,
+   "text": "one",
+   "start": 48.06,
+   "end": 48.32
+  },
+  {
+   "scene": "twist",
+   "i": 3,
+   "text": "word.",
+   "start": 48.32,
+   "end": 48.83
+  },
+  {
+   "scene": "twist",
+   "i": 4,
+   "text": "Too",
+   "start": 49.34,
+   "end": 49.4
+  },
+  {
+   "scene": "twist",
+   "i": 5,
+   "text": "wide,",
+   "start": 49.41,
+   "end": 50.09
+  },
+  {
+   "scene": "twist",
+   "i": 6,
+   "text": "the",
+   "start": 50.51,
+   "end": 50.52
+  },
+  {
+   "scene": "twist",
+   "i": 7,
+   "text": "threads",
+   "start": 50.52,
+   "end": 51.01
+  },
+  {
+   "scene": "twist",
+   "i": 8,
+   "text": "swing",
+   "start": 51.01,
+   "end": 51.36
+  },
+  {
+   "scene": "twist",
+   "i": 9,
+   "text": "to",
+   "start": 51.36,
+   "end": 51.51
+  },
+  {
+   "scene": "twist",
+   "i": 10,
+   "text": "the",
+   "start": 51.51,
+   "end": 51.59
+  },
+  {
+   "scene": "twist",
+   "i": 11,
+   "text": "street.",
+   "start": 51.59,
+   "end": 51.97
+  },
+  {
+   "scene": "twist",
+   "i": 12,
+   "text": "Same",
+   "start": 52.01,
+   "end": 52.87
+  },
+  {
+   "scene": "twist",
+   "i": 13,
+   "text": "word,",
+   "start": 52.87,
+   "end": 53.36
+  },
+  {
+   "scene": "twist",
+   "i": 14,
+   "text": "new",
+   "start": 53.61,
+   "end": 53.82
+  },
+  {
+   "scene": "twist",
+   "i": 15,
+   "text": "meaning,",
+   "start": 53.82,
+   "end": 54.63
+  },
+  {
+   "scene": "twist",
+   "i": 16,
+   "text": "and",
+   "start": 54.78,
+   "end": 54.81
+  },
+  {
+   "scene": "twist",
+   "i": 17,
+   "text": "the",
+   "start": 54.81,
+   "end": 54.99
+  },
+  {
+   "scene": "twist",
+   "i": 18,
+   "text": "model",
+   "start": 55.1,
+   "end": 55.3
+  },
+  {
+   "scene": "twist",
+   "i": 19,
+   "text": "gets",
+   "start": 55.3,
+   "end": 55.54
+  },
+  {
+   "scene": "twist",
+   "i": 20,
+   "text": "both",
+   "start": 55.54,
+   "end": 55.78
+  },
+  {
+   "scene": "twist",
+   "i": 21,
+   "text": "right.",
+   "start": 55.78,
+   "end": 56.19
+  },
+  {
+   "scene": "scale",
+   "i": 0,
+   "text": "and",
+   "start": 57.17,
+   "end": 57.26
+  },
+  {
+   "scene": "scale",
+   "i": 1,
+   "text": "every",
+   "start": 57.26,
+   "end": 57.62
+  },
+  {
+   "scene": "scale",
+   "i": 2,
+   "text": "word",
+   "start": 57.62,
+   "end": 57.9
+  },
+  {
+   "scene": "scale",
+   "i": 3,
+   "text": "does",
+   "start": 57.9,
+   "end": 58.14
+  },
+  {
+   "scene": "scale",
+   "i": 4,
+   "text": "this",
+   "start": 58.23,
+   "end": 58.49
+  },
+  {
+   "scene": "scale",
+   "i": 5,
+   "text": "with",
+   "start": 58.49,
+   "end": 58.78
+  },
+  {
+   "scene": "scale",
+   "i": 6,
+   "text": "every",
+   "start": 58.78,
+   "end": 59.14
+  },
+  {
+   "scene": "scale",
+   "i": 7,
+   "text": "other",
+   "start": 59.14,
+   "end": 59.49
+  },
+  {
+   "scene": "scale",
+   "i": 8,
+   "text": "word,",
+   "start": 59.49,
+   "end": 60.05
+  },
+  {
+   "scene": "scale",
+   "i": 9,
+   "text": "all",
+   "start": 60.05,
+   "end": 60.37
+  },
+  {
+   "scene": "scale",
+   "i": 10,
+   "text": "at",
+   "start": 60.37,
+   "end": 60.58
+  },
+  {
+   "scene": "scale",
+   "i": 11,
+   "text": "once.",
+   "start": 60.58,
+   "end": 61.04
+  },
+  {
+   "scene": "scale",
+   "i": 12,
+   "text": "A",
+   "start": 61.04,
+   "end": 61.2
+  },
+  {
+   "scene": "scale",
+   "i": 13,
+   "text": "thousand",
+   "start": 61.2,
+   "end": 61.74
+  },
+  {
+   "scene": "scale",
+   "i": 14,
+   "text": "words",
+   "start": 61.74,
+   "end": 62.13
+  },
+  {
+   "scene": "scale",
+   "i": 15,
+   "text": "means",
+   "start": 62.13,
+   "end": 62.52
+  },
+  {
+   "scene": "scale",
+   "i": 16,
+   "text": "a",
+   "start": 62.52,
+   "end": 62.59
+  },
+  {
+   "scene": "scale",
+   "i": 17,
+   "text": "million",
+   "start": 62.59,
+   "end": 63.14
+  },
+  {
+   "scene": "scale",
+   "i": 18,
+   "text": "comparisons",
+   "start": 63.14,
+   "end": 64.04
+  },
+  {
+   "scene": "scale",
+   "i": 19,
+   "text": "in",
+   "start": 64.04,
+   "end": 64.2
+  },
+  {
+   "scene": "scale",
+   "i": 20,
+   "text": "every",
+   "start": 64.2,
+   "end": 64.56
+  },
+  {
+   "scene": "scale",
+   "i": 21,
+   "text": "layer.",
+   "start": 64.59,
+   "end": 66.04
+  },
+  {
+   "scene": "end",
+   "i": 0,
+   "text": "That's",
+   "start": 67.02,
+   "end": 67.59
+  },
+  {
+   "scene": "end",
+   "i": 1,
+   "text": "attention.",
+   "start": 67.59,
+   "end": 69.01
+  },
+  {
+   "scene": "end",
+   "i": 2,
+   "text": "Every",
+   "start": 69.01,
+   "end": 69.38
+  },
+  {
+   "scene": "end",
+   "i": 3,
+   "text": "word,",
+   "start": 69.38,
+   "end": 69.85
+  },
+  {
+   "scene": "end",
+   "i": 4,
+   "text": "asking",
+   "start": 69.91,
+   "end": 70.32
+  },
+  {
+   "scene": "end",
+   "i": 5,
+   "text": "every",
+   "start": 70.32,
+   "end": 70.72
+  },
+  {
+   "scene": "end",
+   "i": 6,
+   "text": "other",
+   "start": 70.72,
+   "end": 71.12
+  },
+  {
+   "scene": "end",
+   "i": 7,
+   "text": "word,",
+   "start": 71.12,
+   "end": 71.56
+  },
+  {
+   "scene": "end",
+   "i": 8,
+   "text": "are",
+   "start": 71.74,
+   "end": 71.81
+  },
+  {
+   "scene": "end",
+   "i": 9,
+   "text": "you",
+   "start": 71.81,
+   "end": 72.17
+  },
+  {
+   "scene": "end",
+   "i": 10,
+   "text": "the",
+   "start": 72.17,
+   "end": 72.38
+  },
+  {
+   "scene": "end",
+   "i": 11,
+   "text": "one",
+   "start": 72.38,
+   "end": 72.59
+  },
+  {
+   "scene": "end",
+   "i": 12,
+   "text": "I",
+   "start": 72.59,
+   "end": 72.66
+  },
+  {
+   "scene": "end",
+   "i": 13,
+   "text": "need?",
+   "start": 72.66,
+   "end": 73.02
+  }
+ ]
+}

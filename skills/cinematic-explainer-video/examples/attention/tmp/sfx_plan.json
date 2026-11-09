@@ -1,0 +1,46 @@
+[
+ {
+  "src": "assets/sfx/whoosh-short.mp3",
+  "t": 9.41,
+  "dur": 2.2,
+  "vol": 0.3
+ },
+ {
+  "src": "assets/sfx/tick.mp3",
+  "t": 7.27,
+  "dur": 0.24,
+  "vol": 0.5
+ },
+ {
+  "src": "assets/sfx/whoosh-long.mp3",
+  "t": 27.77,
+  "dur": 2.6,
+  "vol": 0.7,
+  "ms": 1.0
+ },
+ {
+  "src": "assets/sfx/tick.mp3",
+  "t": 49.33,
+  "dur": 0.24,
+  "vol": 0.5
+ },
+ {
+  "src": "assets/sfx/whoosh-short.mp3",
+  "t": 60.42,
+  "dur": 2.2,
+  "vol": 0.22
+ },
+ {
+  "src": "assets/sfx/tick.mp3",
+  "t": 63.29,
+  "dur": 0.24,
+  "vol": 0.5
+ },
+ {
+  "src": "assets/sfx/whoosh-long.mp3",
+  "t": 65.41,
+  "dur": 2.6,
+  "vol": 0.6,
+  "ms": 1.0
+ }
+]
