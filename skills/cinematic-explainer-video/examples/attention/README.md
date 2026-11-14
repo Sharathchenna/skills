@@ -26,3 +26,18 @@ Scenes: hook (3D panels, "What does 'it' mean?") → William James 1890 (paralla
 (real abstract line highlighted, zoom through the title) → mechanism in 3D (query pulse, key tags, threads by
 weight, value bead, 100% bar) → twist ("tired." flips to "wide.", threads swing to "street") → scale (every word to
 every word, 1,000 × 1,000 field, stacked layers) → back to the sentence.
+
+## Known issues (found after publishing, by the rules added later)
+
+This example predates `platform.md`, `writing.md` and the fact ledger, and breaks a few of them. Fix these if you
+reuse its generators:
+- The hook title sits at `top: 210px`, under the Reels top bar and outside the profile-grid crop. Move it to ≈ 300.
+- The William James quote spans x 90–990, under the like/comment column. Cap it at 774 px wide, centred.
+- Captions have no max width. Cap them at 774 px, centred.
+- The narration uses colons ("wrote: everyone knows…", "was called: Attention Is All You Need").
+- There is no `facts/` ledger; the weights are illustrative and should carry an on-screen "illustrative" tag.
+- The music bed ends at the same level it plays; fade it into a 3–4 s silent hold.
+- `check_film.py` finds a near-black dip at 10.27–10.43 s (the hook → William James seam): the world fades before
+  the photo arrives. Overlap the dissolve so the photo is already in when the world dims.
+- From about 33 s the right-hand word panels cross x 927 into the button column. Pull the camera back or narrow
+  the block.

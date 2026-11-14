@@ -10,7 +10,7 @@ built from): 9:16, 60–90 s, narrated, dark and photographic, no hard cuts, one
 | 1. Code-built 3D set | server hall, rows of identical clocks, glowing envelope, orange bokeh | **Three.js world composition** (`templates/world.template.html`): fog, reflective floor, a wall with seeded blinking lights, bloom on the brightest points only, a slow camera on eased keyframes. Identical repeated objects with crisp text are the tell that it is 3D, not AI. |
 | 2. Archive photo brought to life | Einstein turns his head, satellite drifts, museum clock ticks | Best: an image-to-video model (Seedance, Veo, Kling…). Without one: **2.5D parallax** — `npx hyperframes remove-background photo.jpg -o cut.png`, then the photo and the cutout push at different rates (bg 1.02→1.07, figure 1.00→1.14 plus a small x drift). Credit line bottom-left. |
 | 3. Photo plate + code effects | storm photo + drawn train, procedural lightning, rain, grainy wavefront discs | A real image as the plate, code layers on top (SVG/canvas/Three). The wavefront = warm translucent disc, speckled, brighter rim, additive. |
-| 4. Graphics and captions | "waiting 5 ms", "2012: ±4 ms → < 1 ms", karaoke captions | HTML/GSAP compositions above the world; captions in one composition, grey unspoken words turning white per word, ~44 px semi-bold, two lines, centred near y ≈ 1214–1270 on 1080×1920. |
+| 4. Graphics and captions | "waiting 5 ms", "2012: ±4 ms → < 1 ms", karaoke captions | HTML/GSAP compositions above the world; captions in one composition, grey unspoken words turning white per word, semi-bold (test 44–56 px on a phone), two lines, **max width 774 px centred**, band y ≈ 1180–1460 (see `platform.md` safe zones). |
 
 ## Story shape
 
@@ -20,15 +20,28 @@ built from): 9:16, 60–90 s, narrated, dark and photographic, no hard cuts, one
 4. The mechanism, on ONE worked example, built up one part per narrated phrase.
 5. A twist: change one input, watch the mechanism re-route.
 6. Scale: from one example to the real size (numbers that are true).
-7. Back to the opening picture with the one-line takeaway; hold ≥ 2 s.
+7. Back to the opening picture with the one-line takeaway; hold 3–4 s.
 
 One recurring object carries every scene (clocks there; glass word panels + amber threads in the attention example).
 
+This is the general shape. AI news uses the news explainer shape in `ai-news.md`; CS concepts use the CS variant
+in `cs-concepts.md` (a failure story or impossible number can replace the famous person, and the twist is the
+concept's failure mode). Other shapes are in `writing.md`.
+
+## Shots
+
+- Vary shot size (wide / medium / close / extreme close). Never three in a row at the same size. Open wide or close,
+  punch in once on the key word, release wide for the ending.
+- Camera moves never stop dead: blend a linear tail into the ease and keep coasting in the same direction after a
+  key (see `three-world.md`).
+- Every non-footage shot is our illustration. When it simplifies, a small grey line says so.
+
 ## Sound
 
-Voice + a continuous music bed (the reference never drops below −40 dB for more than 0.4 s) + a few effects tied to
-visible actions (whoosh on the big moves, a tick on flips and landing numbers). Mix ≈ −14 LUFS, music ~0.16 under a
-−16 LUFS voice.
+Voice + a continuous music bed (in the body the reference never drops below −40 dB for more than 0.4 s) + a few
+effects tied to visible actions (whoosh on the big moves, a tick on flips and landing numbers). Mix ≈ −14 LUFS with
+a −16 LUFS voice. Set the bed's gain per track from the loudness of the part that plays (0.16 suited the attention
+track), fade it to 0 over the last 6–9 s, and hold the last picture 3–4 s. Targets in `platform.md`.
 
 ## Transitions (there are no hard cuts)
 

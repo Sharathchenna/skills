@@ -47,15 +47,24 @@ HyperFrames registry block `glass-hero` (`npx hyperframes add glass-hero` to rea
 | Labels / numbers | Sprites with cached canvas textures keyed by text (percentages re-key as they count). |
 | Field of thousands | one `InstancedMesh` (additive, per-instance colour as brightness) + `LineSegments` revealed with `setDrawRange`; ripple reveal by distance. Update instance colours only while the field is on screen. |
 | Rack wall | box + instanced seams + 1,500 instanced LED quads with seeded colours and blink. Keep the camera on the hall side of it. |
-| Camera | list of `{t, p, l}` keys, `power2.inOut` between them; a key with `cut: true` holds until the next key at the same time (hide cuts under an opaque overlay). |
+| Camera | list of `{t, p, l}` keys; a key with `cut: true` holds until the next key at the same time (hide cuts under an opaque overlay). Ease with a **speed floor**: `e = (1-k)*smoothstep(u) + k*u` with k ≈ 0.3, and add a slow drift that keeps going in the direction of travel after the key, so moves never land at zero speed and sit there. |
 
 ## Layout lessons
 
 - In 9:16, a sentence of panels reads best as a **centred multi-line block** seen from a slow 3/4 dolly. A row
   receding down a hall (like the reference's clocks) bunches far panels into an unreadable cluster.
-- Keep the block between y ≈ 400 and 1150 px on screen; captions own y ≈ 1214–1270; the 100% bar / counters sit at
-  y 200–420. Lower the camera's look-at target to raise the block in frame.
+- Keep the block between y ≈ 400 and 1150 px on screen and **inside x 153–927** once it reaches y 803 (the TikTok
+  and Reels button column; see `platform.md`). Measure the projected size at the end of each push. Captions own
+  y ≈ 1180–1460 at max 774 px wide; counters and bars sit at y 300–420 (not above 212). Lower the camera's look-at
+  target to raise the block in frame.
 - Fog density ≈ 0.036 for close shots, ≈ 0.011 for the big overview; animate it with the camera.
+
+## State from a simulation, events for pacing
+
+- For algorithms, run a seeded simulator at build time and inject its trace (`[{t, kind, ...state}]`) as JSON;
+  `render(t)` reads the latest event at or before `t`. See `cs-concepts.md` §4.
+- Export the meaningful changes for review: `window.__world.events = [{t, kind}]` (panel flips, threads landing,
+  votes, evictions). Critics and checks use it to measure the gap between changes (≤ 3 s average).
 
 ## Iterate fast
 

@@ -5,7 +5,8 @@ Usage:
   FISH_API_KEY=... python3 fish_tts.py SCRIPT.json [--out tmp/tr] [--voice <reference_id>] [--speed 0.9]
   python3 fish_tts.py SCRIPT.json --key-file /path/to/key   # key read from a file, never echoed
 
-SCRIPT.json is a list of {"id": "<scene id>", "text": "<what the narrator says>"}.
+SCRIPT.json is a list of {"id": "<scene id>", "text": "<what the narrator says>"} (other keys such as
+"facts"/"onscreen" are ignored), or {"mode": "news"|"cs", "scenes": [...]}.
 Writes <out>/<id>.wav for every scene. Raw files: run build_timeline.py next to normalise + time them.
 
 Notes
@@ -33,7 +34,9 @@ if not key:
 os.makedirs(a.out, exist_ok=True)
 only = set(a.only.split(",")) if a.only else None
 
-for scene in json.load(open(a.script)):
+script = json.load(open(a.script))
+scenes = script["scenes"] if isinstance(script, dict) else script   # [...] or {"mode": ..., "scenes": [...]}
+for scene in scenes:                       # extra keys per scene (facts, onscreen, ...) are ignored
     if only and scene["id"] not in only:
         continue
     body = json.dumps({"text": scene["text"], "reference_id": a.voice, "format": "wav",

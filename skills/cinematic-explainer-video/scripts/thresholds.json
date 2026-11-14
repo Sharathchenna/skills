@@ -1,0 +1,252 @@
+{
+  "_about": {
+    "value": 1,
+    "rule": "Every number and phrase list used by check_facts.py, check_film.py and build_timeline.py. Each key is {value, rule, why}; 'level' (error|warn) where a lint can be either. --strict in check_facts.py turns warnings into errors.",
+    "why": "One place to tune the gates; a changed threshold is a visible diff. Rules adapted from shorts-kit by howznguyen (MIT) and the skill's own pitfalls."
+  },
+
+  "bannedMarks": {
+    "value": [":", "—", "–", " - ", "etc."],
+    "level": "error",
+    "rule": "Spoken text (SCRIPT.json scene text) contains no colon, em dash, en dash, spaced hyphen or 'etc.'. Colons between digits (3:45) are ignored.",
+    "why": "Most TTS engines make no pause for these marks, so the line comes out as one breathless run, and the narration becomes the captions, where the marks show on screen and read like an outline."
+  },
+  "bannedPhrases": {
+    "value": ["let's dive in", "let's dive", "deep dive", "did you know", "you won't believe", "it turns out", "here's the thing", "fascinating", "mind-blowing", "mind blowing", "incredible", "game-changer", "game changer", "game-changing", "delve", "tapestry", "a testament to", "in a world where", "imagine a world", "buckle up", "stay tuned", "unlock the secrets", "furthermore", "moreover", "in conclusion", "simply put", "science has proven", "link in bio", "insane", "revolutionary", "groundbreaking", "smash that", "without further ado", "the secret to", "nobody is talking about", "changes everything"],
+    "level": "error",
+    "rule": "None of these phrases in narration or on-screen text (whole words, case-insensitive).",
+    "why": "Hype words and essay joints read as machine-written, and an adjective the viewer cannot check, next to a real number, weakens the number. Large channels use each in 0-4% of videos."
+  },
+  "intensifiers": {
+    "value": ["really", "truly", "extremely", "literally", "not only", "absolutely", "incredibly", "super"],
+    "rule": "Words counted against intensifierBudget.",
+    "why": "One intensifier can land; more read as hype."
+  },
+  "intensifierBudget": {
+    "value": 1,
+    "level": "warn",
+    "rule": "At most this many intensifiers in the whole script.",
+    "why": "See intensifiers."
+  },
+  "maxSentenceWords": {
+    "value": 25,
+    "level": "warn",
+    "rule": "No sentence over this many words; a spoken number ('one point five billion', '1.5B') counts as one word.",
+    "why": "Long sentences have nowhere to breathe; the full stop is where TTS pauses."
+  },
+  "pronounOpeners": {
+    "value": ["it", "it's", "its", "this", "that", "that's", "they", "they're", "these", "those", "he", "she", "we"],
+    "level": "warn",
+    "rule": "No scene's first word is a pronoun; open each scene with a name.",
+    "why": "The viewer may have just scrolled in and does not know what 'it' is."
+  },
+  "parallelRun": {
+    "value": 3,
+    "level": "warn",
+    "rule": "No run of this many consecutive sentences (across the whole script) starting with the same word.",
+    "why": "Parallel triplets read as machine-written."
+  },
+  "sameOpenerMax": {
+    "value": 3,
+    "level": "warn",
+    "rule": "No single first word opens this many or more sentences in the script (words in openerIgnore excepted).",
+    "why": "Repeated sentence openers make a mould the ear hears even when they are not consecutive."
+  },
+  "openerIgnore": {
+    "value": ["the", "a", "an"],
+    "rule": "Articles do not count for sameOpenerMax/parallelRun.",
+    "why": "Articles are too common to be a mould."
+  },
+  "datesPerScene": {
+    "value": 2,
+    "level": "warn",
+    "rule": "At most this many years (1000-2100) spoken per scene.",
+    "why": "Say a year only when it carries a consequence; otherwise it goes on the frame."
+  },
+  "datesPerVideo": {
+    "value": 8,
+    "level": "warn",
+    "rule": "At most this many years spoken in the whole script.",
+    "why": "See datesPerScene."
+  },
+  "universalWords": {
+    "value": ["everyone", "everybody", "nobody", "always", "never", "all of us", "humans are wired", "science has proven", "proves", "every single"],
+    "level": "warn",
+    "rule": "Flag these in a scene whose graded facts are all weak evidence (weakEvidence).",
+    "why": "A universal claim on a single study overclaims."
+  },
+  "weakEvidence": {
+    "value": ["single-study", "review", "failed-replication"],
+    "rule": "Evidence grades counted as weak for universalWords.",
+    "why": "One study or a review cannot carry 'everyone'/'always'."
+  },
+  "evidenceGrades": {
+    "value": ["official-statistic", "meta-analysis", "replicated", "single-study", "failed-replication", "review", "document"],
+    "rule": "Allowed values of a fact's 'evidence' field (unknown -> warning).",
+    "why": "Typos in grades silently disable the weak-evidence check."
+  },
+  "factStatuses": {
+    "value": ["verified", "contested", "unverified", "illustrative"],
+    "rule": "Allowed fact statuses. verified = source opened and value read there; contested = real but sources disagree (needs caveat); unverified = may not be used; illustrative = made-up example values, allowed only with an on-frame 'illustrative' tag.",
+    "why": "A status the lint understands is the gate between research and the script."
+  },
+  "whoMeasured": {
+    "value": ["vendor", "independent", "authors"],
+    "rule": "Allowed values of who_measured.",
+    "why": "Benchmarks run by the vendor must be said as such (news mode warns)."
+  },
+  "sourceKinds": {
+    "value": ["article", "paper", "official", "image", "footage", "voice", "music", "sfx", "font", "screenshot"],
+    "rule": "Allowed values of a source's kind.",
+    "why": "Kinds decide licence and credit rules."
+  },
+  "assetKinds": {
+    "value": ["image", "footage", "voice", "music", "sfx", "font", "screenshot"],
+    "rule": "Source kinds that are assets: licence required (error), verbatim attribution expected (warn), always listed in pinned-comment.txt.",
+    "why": "CC BY has no short-video exemption; credits are generated from records by id, never retyped."
+  },
+  "sourceRoles": {
+    "value": ["candidate-finder", "rejected"],
+    "rule": "Allowed values of a source's role. A fact backed only by candidate-finder sources warns; citing a rejected source is an error.",
+    "why": "Listicles find leads; they do not back an on-screen fact."
+  },
+  "tier3Warn": {
+    "value": 3,
+    "level": "warn",
+    "rule": "Warn when a fact's best source tier is this or worse (1 = body that produced the number, 2 = encyclopaedia, 3 = popular press).",
+    "why": "Press articles copy numbers with drift; go to the producer."
+  },
+  "exemptSceneIds": {
+    "value": ["end", "share"],
+    "rule": "Scene ids that need no fact (the takeaway / share line). Numbers spoken there must still be backed by some cited fact.",
+    "why": "A closing line restates; it should not introduce a new claim."
+  },
+  "asOfMaxDays": {
+    "value": 7,
+    "level": "warn",
+    "rule": "In mode 'news', warn when a cited fact's asOf is older than this many days.",
+    "why": "AI news moves weekly; a present-tense claim has a shelf life."
+  },
+  "presentTenseWords": {
+    "value": ["is", "are", "has", "have", "costs", "cost", "leads", "lead", "ranks", "scores", "tops", "holds", "offers", "supports", "runs", "beats", "remains", "now", "currently", "today", "still", "available"],
+    "rule": "In mode 'news', a fact whose claim contains one of these words is present-tense and needs asOf (error).",
+    "why": "'X is the best model' is only true as of a date."
+  },
+  "illustrativeTag": {
+    "value": "illustrative",
+    "level": "warn",
+    "rule": "A scene citing an illustrative fact should list an onscreen string containing this word.",
+    "why": "Made-up example numbers are fine only when the frame says so."
+  },
+  "numberTolerance": {
+    "value": 0.03,
+    "rule": "A spoken/on-screen number is backed when a number in a cited fact's value/claim/quote/spokenAs or saved source text is within this relative tolerance (years and integers under 10 must match exactly). Percent <-> fraction and scale words (1.5B = 1,500,000,000 = one point five billion) are equivalent.",
+    "why": "Rounding is fine ('71.2' -> 'about 71'); drift is not ('over 75')."
+  },
+  "ignoreBareNumberWords": {
+    "value": ["zero", "one", "two", "three"],
+    "rule": "Spelled-out small numbers with no unit/scale/percent/multiplier are not checked for backing ('change one word', 'the one I need').",
+    "why": "They are almost always grammar, not claims. Digits are always checked."
+  },
+  "factDensity": {
+    "value": 3.75,
+    "level": "warn",
+    "rule": "Seconds of narration per sentence in fact-bearing scenes must not exceed this (2.5 s target x 1.5). Uses timeline.json voice durations when present, else words / wordsPerSecond.",
+    "why": "Long stretches without a checkable statement feel like filler."
+  },
+  "wordsPerSecond": {
+    "value": 2.6,
+    "rule": "Narration pace used to estimate durations before timeline.json exists (Fish 'Documentary' voice at speed 0.9).",
+    "why": "Lets the density check run before TTS."
+  },
+  "hookMaxChars": {
+    "value": 100,
+    "rule": "First line of caption-draft.txt (from scene 1's first sentence) is at most this many characters.",
+    "why": "It is the only line shown before 'more', and it becomes the title on YouTube."
+  },
+  "aiVoiceDisclosure": {
+    "value": "Narration voice is AI-generated (Fish Audio text-to-speech).",
+    "rule": "Line appended to caption-draft.txt.",
+    "why": "TikTok and Instagram ask creators to label realistic AI-generated audio."
+  },
+
+  "ttsLoopRepeats": {
+    "value": 3,
+    "level": "warn",
+    "rule": "build_timeline.py: flag any 1-3-word n-gram repeated this many times in a row in a scene transcript.",
+    "why": "A TTS loop ('consul British consul British...') passes every numeric check, including a 93% alignment rate. Fix by rewriting the line, not by re-rolling."
+  },
+  "transcriptWerMax": {
+    "value": 0.05,
+    "level": "warn",
+    "rule": "build_timeline.py: word error rate between script text and transcript (punctuation, case and number spelling normalised) per scene.",
+    "why": "A dropped or invented word means the captions and the anchors no longer match the script."
+  },
+
+  "film": {
+    "value": {
+      "width": 1080, "height": 1920, "fps": [30, 60], "fpsTolerance": 0.1,
+      "vcodec": "h264", "pixFmt": "yuv420p", "acodec": "aac", "sampleRate": 48000, "channels": 2,
+      "avTolerance": 0.25
+    },
+    "level": "error",
+    "rule": "check_film.py container: 1080x1920, 30 or 60 fps, H.264 yuv420p, one AAC 48 kHz audio stream (stereo: warn), audio covers video within avTolerance s.",
+    "why": "What TikTok/Reels ingest without a re-encode surprise; a short audio track ends in silence or a black tail."
+  },
+  "duration": {
+    "value": {"warnMin": 45, "warnMax": 90, "hardMax": {"tiktok": 600, "reels": 180, "both": 180}},
+    "rule": "Warn outside warnMin-warnMax seconds; fail above the profile's hardMax.",
+    "why": "45-90 s is the format; Reels caps uploads at 3 minutes."
+  },
+  "finalHold": {
+    "value": 2.0,
+    "level": "error",
+    "rule": "With timeline.json: video duration minus the last word's end is at least this many seconds.",
+    "why": "The takeaway needs a beat to land before the loop restarts."
+  },
+  "frame0MinLuma": {
+    "value": 12,
+    "level": "error",
+    "rule": "Mean luma of frame 0 (full range 0-255) must exceed this.",
+    "why": "Frame 0 is the autoplay thumbnail; a black first frame reads as nothing."
+  },
+  "blackDetect": {
+    "value": {"d": 0.05, "pix_th": 0.10, "pic_th": 0.98, "endGrace": 0.5},
+    "level": "error",
+    "rule": "No black stretch (ffmpeg blackdetect) mid-film. One that ends in the last endGrace s is only a warning (intentional fade).",
+    "why": "A black frame mid-film is an opaque overlay or a missing layer (the transparent-root pitfall)."
+  },
+  "freezeDetect": {
+    "value": {"noise": "-50dB", "d": 1.0, "maxPer30s": 1.5},
+    "level": "warn",
+    "rule": "Warn on frozen stretches longer than d seconds outside the final hold, or more than maxPer30s s frozen per 30 s.",
+    "why": "The camera should always be moving; a frozen frame reads as a stalled render."
+  },
+  "loudness": {
+    "value": {"integrated": -14.0, "tolerance": 1.5, "truePeakMax": -1.0},
+    "level": "error",
+    "rule": "Integrated loudness -14 +/- 1.5 LUFS and true peak <= -1.0 dBTP, measured on the final encoded file (ffmpeg ebur128=peak=true).",
+    "why": "Platforms normalise near -14; AAC overshoots 0.2-0.6 dB, so peaks are checked after encode."
+  },
+  "voiceBedSpread": {
+    "value": {"window": 0.2, "minSpreadDb": 9.0, "silenceFloorDb": -70.0},
+    "level": "warn",
+    "rule": "P90 - P10 of 200 ms RMS windows (mono mix, windows quieter than silenceFloorDb dropped) is at least minSpreadDb.",
+    "why": "A bed too close to the voice makes speech hard to follow; percentiles need no timestamps. shorts-kit's best video measured 12.1 dB."
+  },
+  "safeZones": {
+    "value": {
+      "tiktok": {"top": 132, "bottom": 1749, "rightX": 949, "rightFromY": 803},
+      "reels":  {"top": 212, "bottom": 1726, "rightX": 927, "rightFromY": 1114},
+      "both":   {"top": 212, "bottom": 1726, "rightX": 927, "rightFromY": 803},
+      "panelWidth": 774
+    },
+    "rule": "check_film.py --sheet draws red bands where platform UI covers the frame (y < top, y > bottom, x >= rightX for y >= rightFromY) and a dashed centred panelWidth box.",
+    "why": "Measured from iOS UI screenshots (shorts-kit); text under the like button or the description is lost. Re-check when the apps change."
+  },
+  "sheetStep": {
+    "value": 3.0,
+    "rule": "Contact sheet frame interval in seconds.",
+    "why": "One frame per beat-ish; dense enough to catch a caption crossing a band."
+  }
+}
