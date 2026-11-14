@@ -222,6 +222,12 @@
     "rule": "Warn on frozen stretches longer than d seconds outside the final hold, or more than maxPer30s s frozen per 30 s.",
     "why": "The camera should always be moving; a frozen frame reads as a stalled render."
   },
+  "motionJumps": {
+    "value": {"whip": 6.0, "minFrames": 3, "cut": 10.0},
+    "level": "warn",
+    "rule": "Mean absolute frame-to-frame luma change (270x480 grey, 0-255). A run of >= minFrames frames above `whip` is a whip pan; one frame above `cut` between quiet frames is a hard cut.",
+    "why": "Camera moves that cross the set in under a second and jump cuts are what make a render feel jerky. Calibrated on the Diffie-Hellman film: its whips peaked at 12.9-15.4."
+  },
   "loudness": {
     "value": {"integrated": -14.0, "tolerance": 1.5, "truePeakMax": -1.0},
     "level": "error",
@@ -236,13 +242,13 @@
   },
   "safeZones": {
     "value": {
-      "tiktok": {"top": 132, "bottom": 1749, "rightX": 949, "rightFromY": 803},
-      "reels":  {"top": 212, "bottom": 1726, "rightX": 927, "rightFromY": 1114},
-      "both":   {"top": 212, "bottom": 1726, "rightX": 927, "rightFromY": 803},
-      "panelWidth": 774
+      "tiktok": {"top": 240, "bottom": 1260, "rightX": 780, "rightFromY": 840},
+      "reels":  {"top": 269, "bottom": 1248, "rightX": 1015, "rightFromY": 269},
+      "both":   {"top": 288, "bottom": 1248, "rightX": 780, "rightFromY": 840},
+      "panelWidth": 660
     },
-    "rule": "check_film.py --sheet draws red bands where platform UI covers the frame (y < top, y > bottom, x >= rightX for y >= rightFromY) and a dashed centred panelWidth box.",
-    "why": "Measured from iOS UI screenshots (shorts-kit); text under the like button or the description is lost. Re-check when the apps change."
+    "rule": "check_film.py --sheet draws red bands outside the platforms' clear bands (y < top, y > bottom, x >= rightX for y >= rightFromY) and a dashed centred panelWidth box (the caption width).",
+    "why": "The same clear bands `npx hyperframes check` enforces on DOM text (scaled to 1080x1920); 'both' is the intersection of TikTok, Reels and Shorts."
   },
   "sheetStep": {
     "value": 3.0,

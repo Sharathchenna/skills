@@ -1,0 +1,46 @@
+[
+ {
+  "q": "In the video, what do Alice and Bob actually send each other?",
+  "options": [
+   "Their secret colours, sealed",
+   "The finished shared colour",
+   "Their pot after mixing in their own secret",
+   "The public yellow and nothing else"
+  ],
+  "answer": 2,
+  "kind": "claim"
+ },
+ {
+  "q": "Why does the spy end up with the wrong colour?",
+  "options": [
+   "The spy mixes them in the wrong order",
+   "Mixing both swapped pots puts the yellow in twice",
+   "The spy never sees the public yellow",
+   "The spy's copies fade before mixing"
+  ],
+  "answer": 1,
+  "kind": "key-moment"
+ },
+ {
+  "q": "According to the video, what stops the spy from working out the key?",
+  "options": [
+   "The swapped pots are hidden from the spy",
+   "Un-mixing has no known fast way at real sizes",
+   "The shared colour is sent separately, encrypted",
+   "Alice and Bob change the public colour each time"
+  ],
+  "answer": 1,
+  "kind": "twist"
+ },
+ {
+  "q": "In the toy numbers, Alice's swapped value is 8 and Bob's is 19. What does each side compute to reach the shared key?",
+  "options": [
+   "8 + 19, mod 23",
+   "8 × 19, mod 23",
+   "19⁶ and 8¹⁵, each mod 23",
+   "19 × 6 and 8 × 15, each mod 23"
+  ],
+  "answer": 2,
+  "kind": "transfer"
+ }
+]

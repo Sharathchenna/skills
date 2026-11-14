@@ -1,0 +1,326 @@
+<!doctype html>
+<!--
+  World (studio set): the film's whole 3D set, mounted under every HTML layer. Built from the Diffie–Hellman rebuild.
+  What is generic here and should stay:
+    - render(t) is a pure function of t; all randomness is seeded; the GSAP clock drives it (seek-safe).
+    - The camera plays back a path sampled by scripts/camera_path.py (CFG.camPath, CFG.fps): smooth and speed-checked.
+    - Labels are DOM text (#world-labels) placed from 3D anchors by placeLabels(): kept inside the STAGE zone and never
+      overlapping each other, so `npx hyperframes check` can audit them. Never draw readable text into WebGL.
+    - The set: gradient backdrop (no pow() of negatives in shaders: NaN turns the whole bloomed frame black),
+      a fogged stone tabletop with a small mirror under the hero, a warm backlight halo, soft dust, a DOM vignette.
+  Replace the HERO section with your recurring object, and the render loop's middle with your story states.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #06080b; }
+      #world-root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #06080b; }
+      #world-canvas { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+      @font-face { font-family: 'WInter'; src: url('assets/fonts/Inter-700.woff2') format('woff2'); font-weight: 700; }
+      @font-face { font-family: 'WMono'; src: url('assets/fonts/JetBrainsMono-400.woff2') format('woff2'); font-weight: 400; }
+      /* Vignette over the 3D set, under every text layer. */
+      #world-vignette { position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(120% 75% at 50% 46%, rgba(0,0,0,0) 52%, rgba(0,0,0,0.38) 78%, rgba(0,0,0,0.72) 100%); }
+      /* Labels are real DOM text placed from 3D positions, so `hyperframes check` audits overlaps and safe zones. */
+      #world-labels { position: absolute; inset: 0; pointer-events: none; }
+      .wl { position: absolute; left: 0; top: 0; white-space: nowrap; font-family: 'WInter', Inter, sans-serif; font-weight: 700;
+            color: #F4F1EA; text-shadow: 0 2px 16px rgba(0,0,0,0.9), 0 0 3px rgba(0,0,0,0.8); opacity: 0; will-change: transform, opacity; }
+      .wl.name { font-size: 40px; letter-spacing: 0.01em; }
+      .wl.name.dim { font-size: 34px; color: rgba(232,237,242,0.82); }
+      .wl.val { font-size: 52px; }
+      .wl.mono { font-family: 'WMono', 'JetBrains Mono', monospace; font-weight: 400; font-size: 32px; }
+    </style>
+  </head>
+  <body>
+    <div id="world-root" data-composition-id="world" data-start="0" data-duration="__DUR__" data-width="1080" data-height="1920">
+      <canvas id="world-canvas" class="clip" data-start="0" data-duration="__DUR__" data-track-index="1" width="1080" height="1920" data-layout-ignore></canvas>
+      <div id="world-vignette" data-layout-ignore></div>
+      <div id="world-labels"></div>
+    </div>
+
+    <script>
+      window.__WORLD_CONFIG = __CONFIG__;
+      (function () {
+        var D = window.__WORLD_CONFIG.total;
+        var clock = { t: 0 };
+        var host = { clock: clock, render: null, config: window.__WORLD_CONFIG, events: window.__WORLD_CONFIG.events };
+        window.__world = host;
+        window.__hf = window.__hf || {};
+        window.__hf.buildReady = window.__hf.buildReady || {};
+        window.__hf.buildReady["world"] = new Promise(function (resolve) { host.ready = resolve; });
+        var tl = gsap.timeline({ paused: true });
+        tl.to(clock, { t: D, duration: D, ease: "none", onUpdate: function () { if (host.render) host.render(clock.t); } });
+        window.__timelines = window.__timelines || {};
+        window.__timelines["world"] = tl;
+      })();
+    </script>
+
+    <script type="module">
+      import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.184.0/+esm";
+      const CDN = "https://cdn.jsdelivr.net/npm/three@0.184.0/examples/jsm/";
+      let Reflector = null, EffectComposer = null, RenderPass = null, UnrealBloomPass = null, OutputPass = null;
+      const DBG = new URLSearchParams(location.search);
+      if (!DBG.has("noreflect")) try { ({ Reflector } = await import(CDN + "objects/Reflector.js/+esm")); } catch (e) { console.error("[world] reflector unavailable", e); }
+      if (!DBG.has("nobloom")) try {
+        ({ EffectComposer } = await import(CDN + "postprocessing/EffectComposer.js/+esm"));
+        ({ RenderPass } = await import(CDN + "postprocessing/RenderPass.js/+esm"));
+        ({ UnrealBloomPass } = await import(CDN + "postprocessing/UnrealBloomPass.js/+esm"));
+        ({ OutputPass } = await import(CDN + "postprocessing/OutputPass.js/+esm"));
+      } catch (e) { console.error("[world] postprocessing unavailable", e); EffectComposer = null; }
+
+      const host = window.__world;
+      const CFG = host.config;
+      const A = CFG.anchors;
+      const EX = CFG.example;
+      const W = 1080, H = 1920;
+
+      // ------------------------------------------------------------------ helpers
+      const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+      const ramp = (t, a, d) => cl((t - a) / d);
+      const eio = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
+      const eo3 = (x) => 1 - Math.pow(1 - x, 3);
+      const lerp = (a, b, k) => a + (b - a) * k;
+      function mulberry32(a) { return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+      const V = (x, y, z) => new THREE.Vector3(x, y, z);
+      const C = (r, g, b) => new THREE.Color().setRGB(r, g, b, THREE.SRGBColorSpace);
+
+      // ------------------------------------------------------------------ palette
+      const COL = { amber: C(1.0, 0.6, 0.2), ink: C(0.96, 0.95, 0.92) };
+
+      // ------------------------------------------------------------------ renderer
+      const canvas = document.getElementById("world-canvas");
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true, powerPreference: "high-performance" });
+      renderer.setPixelRatio(1);
+      renderer.setSize(W, H, false);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.NoToneMapping;
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x07080b);
+      scene.fog = new THREE.FogExp2(0x17110c, 0.07);
+      const camera = new THREE.PerspectiveCamera(52, W / H, 0.05, 300);
+
+      let composer = null;
+      if (EffectComposer) {
+        try {
+          composer = new EffectComposer(renderer);
+          composer.setPixelRatio(1);
+          composer.setSize(W, H);
+          composer.addPass(new RenderPass(scene, camera));
+          composer.addPass(new UnrealBloomPass(new THREE.Vector2(W, H), 0.55, 0.5, 0.9));
+          composer.addPass(new OutputPass());
+        } catch (e) { console.error("[world] composer failed", e); composer = null; }
+      }
+
+      // ------------------------------------------------------------------ fonts + textures
+      for (const [fam, url, wt] of [["WInter", "assets/fonts/Inter-700.woff2", "700"], ["WMono", "assets/fonts/JetBrainsMono-400.woff2", "400"]]) {
+        try { const f = new FontFace(fam, `url(${url})`, { weight: wt }); document.fonts.add(await f.load()); } catch (e) { console.error("[world] font", fam, e); }
+      }
+      const maxAniso = renderer.capabilities.getMaxAnisotropy();
+      const mkCanvas = (w, h) => { const c = document.createElement("canvas"); c.width = w; c.height = h; return c; };
+      const texOf = (c) => { const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = maxAniso; return t; };
+      const measure = (font, text) => { const g = mkCanvas(8, 8).getContext("2d"); g.font = font; return g.measureText(text).width; };
+      function glowTex() {
+        const S = 256, c = mkCanvas(S, S), g = c.getContext("2d");
+        const gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+        gr.addColorStop(0, "rgba(255,255,255,0.9)"); gr.addColorStop(0.25, "rgba(255,255,255,0.35)"); gr.addColorStop(1, "rgba(255,255,255,0)");
+        g.fillStyle = gr; g.fillRect(0, 0, S, S);
+        return texOf(c);
+      }
+      function swirlTex() {
+        // paint surface: soft radial shading + spiral streaks (greyscale, tinted by material colour)
+        const S = 512, c = mkCanvas(S, S), g = c.getContext("2d"), r = mulberry32(11);
+        const gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+        gr.addColorStop(0, "#ffffff"); gr.addColorStop(0.8, "#d9d9d9"); gr.addColorStop(1, "#8a8a8a");
+        g.fillStyle = gr; g.beginPath(); g.arc(S / 2, S / 2, S / 2, 0, Math.PI * 2); g.fill();
+        g.lineCap = "round";
+        for (let k = 0; k < 26; k++) {
+          const a0 = r() * Math.PI * 2, light = r() < 0.5;
+          g.strokeStyle = light ? "rgba(255,255,255,0.55)" : "rgba(90,90,90,0.35)";
+          g.lineWidth = 3 + r() * 9;
+          g.beginPath();
+          for (let s = 0; s <= 40; s++) { const u = s / 40, rad = (0.08 + 0.85 * u) * S / 2, a = a0 + u * 3.2; const x = S / 2 + Math.cos(a) * rad, y = S / 2 + Math.sin(a) * rad; s ? g.lineTo(x, y) : g.moveTo(x, y); }
+          g.stroke();
+        }
+        return texOf(c);
+      }
+      function ringTex() {
+        const S = 512, c = mkCanvas(S, S), g = c.getContext("2d"), r = mulberry32(42);
+        const gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+        gr.addColorStop(0, "rgba(255,226,180,0.0)"); gr.addColorStop(0.86, "rgba(255,226,180,0.12)"); gr.addColorStop(0.98, "rgba(255,236,205,0.85)"); gr.addColorStop(1, "rgba(255,236,205,0)");
+        g.fillStyle = gr; g.beginPath(); g.arc(S / 2, S / 2, S / 2, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "rgba(255,240,220,0.5)";
+        for (let k = 0; k < 1400; k++) { const a = r() * Math.PI * 2, d = (0.75 + 0.24 * Math.sqrt(r())) * S * 0.5; g.fillRect(S / 2 + Math.cos(a) * d, S / 2 + Math.sin(a) * d, 1.6, 1.6); }
+        return texOf(c);
+      }
+      const GLOW = glowTex(), SWIRL = swirlTex(), RING = ringTex();
+
+      // ------------------------------------------------------------------ the room
+      // A dark studio: stone tabletop under pools of light, a warm backlit backdrop, soft light shafts.
+      scene.add(new THREE.AmbientLight(0x9aa6b4, 0.35));
+      const key = new THREE.DirectionalLight(0xffd6a8, 1.25); key.position.set(3, 7, 5); scene.add(key);
+      const rim = new THREE.DirectionalLight(0x9fb8e0, 0.55); rim.position.set(-4, 5, -8); scene.add(rim);
+      const topSpot = new THREE.SpotLight(0xffe2bd, 18, 14, 0.62, 0.65, 1.6); topSpot.position.set(0, 7.5, 0.6); topSpot.target.position.set(0, 0, -0.1); scene.add(topSpot, topSpot.target);
+
+      // backdrop: inside of a big sphere, vertical gradient with a warm glow low behind the table
+      const skyMat = new THREE.ShaderMaterial({
+        side: THREE.BackSide, depthWrite: false, fog: false,
+        uniforms: { uTop: { value: new THREE.Color(0x040509) }, uHor: { value: new THREE.Color(0x17110c) }, uGlow: { value: new THREE.Color(0x3c2410) }, uCool: { value: new THREE.Color(0x0d1a2b) } },
+        vertexShader: `varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+        fragmentShader: `uniform vec3 uTop, uHor, uGlow, uCool; varying vec3 vP;
+          void main(){
+            float h = clamp(vP.y * 1.4, 0.0, 1.0);
+            vec3 c = mix(uHor, uTop, smoothstep(0.0, 1.0, h));
+            float back = clamp(-vP.z, 0.0, 1.0);
+            float gy = (vP.y - 0.06) / 0.2, gx = vP.x / 0.5;
+            float glow = exp(-gy * gy) * exp(-gx * gx) * back * smoothstep(0.0, 0.14, vP.y);   // x*x, never pow() of a negative (NaN)
+            c += uGlow * glow * 0.75;
+            c = mix(c, uCool, clamp(-vP.x, 0.0, 1.0) * 0.35 * (1.0 - h * 0.5));
+            gl_FragColor = vec4(c, 1.0);
+            #include <colorspace_fragment>
+          }`,
+      });
+      scene.add(new THREE.Mesh(new THREE.SphereGeometry(60, 48, 32), skyMat));
+
+      if (Reflector) {
+        const mirror = new Reflector(new THREE.CircleGeometry(5.5, 64), { textureWidth: 540, textureHeight: 960, color: 0x3e3b38, clipBias: 0.003 });
+        mirror.rotation.x = -Math.PI / 2; scene.add(mirror);
+      }
+      // stone tabletop: soft marble veining, fading into the dark at its edge
+      function stoneTex() {
+        const S = 1024, c = mkCanvas(S, S), g = c.getContext("2d"), r = mulberry32(77);
+        g.fillStyle = "#0d0c0b"; g.fillRect(0, 0, S, S);
+        for (let k = 0; k < 1800; k++) {
+          const x = r() * S, y = r() * S, rr = 30 + r() * 140, gr = g.createRadialGradient(x, y, 0, x, y, rr), v = 14 + r() * 14;
+          gr.addColorStop(0, `rgba(${v + 8},${v + 5},${v},0.05)`); gr.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = gr; g.fillRect(x - rr, y - rr, rr * 2, rr * 2);
+        }
+        g.lineCap = "round";
+        for (let k = 0; k < 22; k++) {
+          let x = r() * S, y = r() * S, a = r() * Math.PI * 2;
+          g.strokeStyle = `rgba(190,170,140,${0.035 + r() * 0.05})`; g.lineWidth = 0.6 + r() * 1.8; g.beginPath(); g.moveTo(x, y);
+          for (let k2 = 0; k2 < 60; k2++) { a += (r() - 0.5) * 0.5; x += Math.cos(a) * 9; y += Math.sin(a) * 9; g.lineTo(x, y); }
+          g.stroke();
+        }
+        const t = texOf(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
+      }
+      function edgeFade() {
+        const S = 512, c = mkCanvas(S, S), g = c.getContext("2d");
+        const gr = g.createRadialGradient(S / 2, S / 2, S * 0.18, S / 2, S / 2, S / 2);
+        gr.addColorStop(0, "#fff"); gr.addColorStop(0.62, "#9a9a9a"); gr.addColorStop(1, "#000");
+        g.fillStyle = gr; g.fillRect(0, 0, S, S); return new THREE.CanvasTexture(c);
+      }
+      const table = new THREE.Mesh(new THREE.CircleGeometry(16, 96), new THREE.MeshStandardMaterial({ map: stoneTex(), alphaMap: edgeFade(), transparent: true, opacity: Reflector ? 0.9 : 1, roughness: 0.42, metalness: 0.15, color: 0x7a7068 }));
+      table.material.map.repeat.set(4, 4);
+      table.rotation.x = -Math.PI / 2; table.position.y = 0.002; scene.add(table);
+
+      // light shafts: faint additive cones from above
+      function shaftTex() {
+        const S = 256, c = mkCanvas(S, S), g = c.getContext("2d");
+        const gr = g.createLinearGradient(0, 0, 0, S); gr.addColorStop(0, "rgba(255,255,255,0.0)"); gr.addColorStop(0.25, "rgba(255,255,255,0.55)"); gr.addColorStop(1, "rgba(255,255,255,0.0)");
+        g.fillStyle = gr; g.fillRect(0, 0, S, S);
+        const gx = g.createLinearGradient(0, 0, S, 0); gx.addColorStop(0, "rgba(0,0,0,1)"); gx.addColorStop(0.5, "rgba(0,0,0,0)"); gx.addColorStop(1, "rgba(0,0,0,1)");
+        g.globalCompositeOperation = "destination-out"; g.fillStyle = gx; g.fillRect(0, 0, S, S);
+        return texOf(c);
+      }
+      // backlight: a big soft warm halo behind the table, so the pots read as silhouettes against light
+      const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: 0xffb36b, transparent: true, opacity: 0.22, depthWrite: false, fog: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+      halo.scale.set(11, 6.5, 1); halo.position.set(0, 1.4, -5.5); scene.add(halo);
+      const SHAFT = shaftTex(), shafts = [];
+      for (const [x, z, rot, op] of []) {
+        const m = new THREE.Mesh(new THREE.ConeGeometry(1.25, 7, 48, 1, true), new THREE.MeshBasicMaterial({ map: SHAFT, color: 0xffd9a8, transparent: true, opacity: op, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, toneMapped: false }));
+        m.position.set(x, 3.5, z); m.rotation.z = rot; m.userData.op = op; scene.add(m); shafts.push(m);
+      }
+
+      // dust: small soft round motes in the light, shrunk near the camera so they never become blobs
+      const DUST = 260, dR = mulberry32(5), dPos = [];
+      const dustMat = new THREE.MeshBasicMaterial({ map: GLOW, color: 0xffe2b8, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
+      const dust = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.03, 0.03), dustMat, DUST);
+      for (let k = 0; k < DUST; k++) dPos.push([(dR() - 0.5) * 6, dR() * 4, (dR() - 0.5) * 6 - 0.5, dR() * 6.28]);
+      scene.add(dust);
+      const m4 = new THREE.Matrix4(), dScale = V(1, 1, 1), dP = V(0, 0, 0);
+      function updateDust(t) {
+        for (let k = 0; k < DUST; k++) {
+          const p = dPos[k];
+          dP.set(p[0] + Math.sin(t * 0.15 + p[3]) * 0.3, (p[1] + t * 0.04) % 4, p[2]);
+          const near = cl((dP.distanceTo(camera.position) - 0.9) / 1.2);
+          dScale.setScalar(Math.max(near, 0.0001));
+          m4.compose(dP, camera.quaternion, dScale); dust.setMatrixAt(k, m4);
+        }
+        dust.instanceMatrix.needsUpdate = true;
+      }
+
+      // ------------------------------------------------------------------ HERO (replace with your recurring object)
+      const heroMat = new THREE.MeshStandardMaterial({ color: 0x161b22, roughness: 0.3, metalness: 0.8 });
+      const hero = new THREE.Mesh(new THREE.TorusKnotGeometry(0.45, 0.14, 160, 24), heroMat);
+      hero.position.set(0, 0.9, 0); scene.add(hero);
+      const heroGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: COL.amber, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+      heroGlow.scale.set(2.4, 2.4, 1); heroGlow.position.copy(hero.position); scene.add(heroGlow);
+      const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.54, 0.32, 48), new THREE.MeshStandardMaterial({ color: 0x0f1318, roughness: 0.5, metalness: 0.6 }));
+      ped.position.set(0, 0.16, 0); scene.add(ped);
+
+      // labels: DOM text placed from 3D anchors (in the render loop), kept inside the stage zone, never overlapping
+      const labelsRoot = document.getElementById("world-labels");
+      const STAGE = { x0: 130, x1: 770, y0: 480, y1: 1010 };   // HyperFrames' TikTok/Reels/Shorts clear bands; header above, captions below
+      const LBL = {};
+      function mkLabel(id, cls) { const el = document.createElement("div"); el.id = "wl-" + id; el.className = "wl " + cls; labelsRoot.appendChild(el); LBL[id] = { el, text: null, w: 0, h: 0 }; }
+      for (const [id, cls] of [["hero", "name"], ["value", "val"]]) mkLabel(id, cls);   // one element per label you will place
+      const proj = new THREE.Vector3();
+      function toScreen(p) { proj.copy(p).project(camera); return { x: (proj.x + 1) / 2 * W, y: (1 - proj.y) / 2 * H, behind: proj.z > 1 }; }
+      function placeLabels(items) {
+        // items: {id, text, color, at (Vector3), dy (px, + = below), op, pri}; higher pri places first
+        const placed = [];
+        items.sort((a, b) => b.pri - a.pri);
+        for (const it of items) {
+          const L = LBL[it.id];
+          if (it.op < 0.01) { L.el.style.opacity = "0"; continue; }
+          if (L.text !== it.text) { L.el.textContent = it.text; L.text = it.text; L.w = L.el.offsetWidth; L.h = L.el.offsetHeight; }
+          if (it.color) L.el.style.color = it.color;
+          const p = toScreen(it.at);
+          if (p.behind) { L.el.style.opacity = "0"; continue; }
+          const x = cl(p.x - L.w / 2, STAGE.x0, STAGE.x1 - L.w), y0 = p.y + it.dy - L.h / 2;
+          let ok = false, y = y0;
+          for (const off of [0, 1, -1, 2, -2, 3]) {
+            y = cl(y0 + off * (L.h * 0.9 + 8), STAGE.y0, STAGE.y1 - L.h);
+            if (!placed.some((r) => x < r.x + r.w + 12 && r.x < x + L.w + 12 && y < r.y + r.h + 6 && r.y < y + L.h + 6)) { ok = true; break; }
+          }
+          if (!ok) { L.el.style.opacity = "0"; continue; }
+          placed.push({ x, y, w: L.w, h: L.h });
+          L.el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+          L.el.style.opacity = it.op.toFixed(3);
+        }
+      }
+
+      // ------------------------------------------------------------------ camera
+      // camera: tools/gen.py samples a C1-continuous spline at 30 fps; play it back exactly
+      const PATH = CFG.camPath, FPS = CFG.fps;
+      const camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
+      function cameraAt(t) {
+        const f = cl(t * FPS, 0, PATH.length - 1), i = Math.floor(f), j = Math.min(i + 1, PATH.length - 1), u = f - i;
+        const a = PATH[i], b = PATH[j];
+        camPos.set(lerp(a[0], b[0], u), lerp(a[1], b[1], u), lerp(a[2], b[2], u));
+        camLook.set(lerp(a[3], b[3], u), lerp(a[4], b[4], u), lerp(a[5], b[5], u));
+        camera.position.copy(camPos); camera.lookAt(camLook);
+      }
+
+      // ------------------------------------------------------------------ render
+      host.render = (t) => {
+        cameraAt(t);
+        updateDust(t);
+        // ---- your story states: every value is a function of t (ramp/eio on anchors), never of the previous frame
+        const A = CFG.anchors || {};
+        hero.rotation.y = t * 0.35;
+        heroGlow.material.opacity = 0.25 + 0.15 * Math.sin(t * 1.3);
+        // ---- labels: DOM text from 3D anchors, clamped into the stage, collision-free
+        placeLabels([
+          { id: "hero", text: "the recurring object", at: V(0, 0.0, 0.55), dy: 34, op: ramp(t, 0.5, 0.5), pri: 2 },
+          { id: "value", text: "42", color: "#ffd0a0", at: V(0, 1.6, 0), dy: -10, op: ramp(t, 2, 0.4), pri: 3 },
+        ]);
+        if (composer) composer.render(); else renderer.render(scene, camera);
+      };
+      host.render(host.clock.t);
+      host.ready();
+    </script>
+  </body>
+</html>

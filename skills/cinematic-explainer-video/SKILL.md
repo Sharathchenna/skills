@@ -80,13 +80,18 @@ loops, transcript ≠ script) and listen across scene seams for pace jumps.
 - Every asset gets a `SOURCES.json` record with its licence.
 
 ### 5. Build
-- `compositions/world.html` from `templates/world.template.html`. Adapt panels, layouts, threads and camera keys to
-  the subject, and inject anchors (absolute word times) as JSON. For algorithms, inject a seeded simulator's trace.
-  Keep `render(t)` pure and export `window.__world.events`.
+- `compositions/world.html` from **`templates/world-studio.template.html`** (the set, DOM labels, sampled camera;
+  `three-world.md` explains why). Replace the hero with your recurring object; borrow panels, threads and fields from
+  `templates/world.template.html` if you need them. Inject anchors (absolute word times) as JSON and fail on any
+  missing one. For algorithms, inject a seeded simulator's trace. Keep `render(t)` pure and export
+  `window.__world.events`.
+- Camera: a few keys → `scripts/camera_path.py` → `CFG.camPath`. It refuses whips; no cuts inside the world.
+- Labels: DOM only, through `placeLabels` (never text in WebGL).
 - HTML layers above it (each a `<template>` scene, **transparent `#root`**): title, photo scenes (parallax),
   document/evidence scene (highlight the real line, zoom through it into the world), callout UI, and one `captions`
-  composition (max width 774 px, centred, y ≈ 1180–1460).
-- **Respect the safe zones** in `platform.md`: text at y 212–1726, and nothing readable at x ≥ 927 once y ≥ 803.
+  composition (max width 660 px, centred, y ≈ 1040–1248).
+- **Respect the layout zones** in `platform.md`: header y 288–480, stage y 480–1010 (x ≤ 770 below y 840), captions
+  y 1040–1248 at max 660 px wide, nothing readable below 1248.
 - `index.html`: world host at z-index 1 for the whole film, layers above, captions at z 20, voice, effects and the
   music bed (gain set per track; fade out into a 3–4 s final hold).
 - Generate it all from a script (see `examples/attention/tools/gen2.py`), so a timing change is one re-run.
@@ -94,7 +99,7 @@ loops, transcript ≠ script) and listen across scene seams for pace jumps.
 
 ### 6. Review (do not skip; the builder doesn't grade itself)
 ```bash
-npx hyperframes check --json                                   # fix every error; weigh warnings
+npx hyperframes check --json --samples 40                       # overlaps, safe zones, contrast: 0 errors, fix warnings
 node tools/world_frames.cjs compositions/world.html 0.5,6.9,37.6   # world alone, fast
 npx hyperframes snapshot --at <every beat and both sides of every seam> --no-end
 npx hyperframes render -o renders/preview.mp4 --skill hyperframes  # in the background
@@ -122,6 +127,8 @@ publishing.
   landing); the twist re-runs the mechanism on the same object.
 - One accent colour (amber) reserved for the answer; everything else warm white on near-black.
 - Every number traces to the ledger; benchmarks say who measured them; simplified visuals say so.
-- Slow camera always moving; scene changes by camera, dissolve or zoom-through only.
+- Slow camera always moving; scene changes by camera, dissolve or zoom-through only; no move faster than the
+  camera_path limits, so `check_film.py` reports 0 whips and 0 hard cuts.
+- Text never collides: every readable word is DOM, in its zone, and `hyperframes check` is clean.
 
 Credits for borrowed ideas are in the repo README.

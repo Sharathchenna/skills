@@ -1,0 +1,959 @@
+{
+ "total": 48.68,
+ "scenes": [
+  {
+   "id": "hook",
+   "start": 0.0,
+   "length": 4.7,
+   "voiceAt": 0.3,
+   "voiceDur": 4.06
+  },
+  {
+   "id": "history",
+   "start": 4.7,
+   "length": 5.93,
+   "voiceAt": 0.25,
+   "voiceDur": 5.39
+  },
+  {
+   "id": "mix",
+   "start": 10.63,
+   "length": 8.32,
+   "voiceAt": 0.25,
+   "voiceDur": 7.84
+  },
+  {
+   "id": "match",
+   "start": 18.95,
+   "length": 6.73,
+   "voiceAt": 0.25,
+   "voiceDur": 6.17
+  },
+  {
+   "id": "spy",
+   "start": 25.68,
+   "length": 5.29,
+   "voiceAt": 0.25,
+   "voiceDur": 4.7
+  },
+  {
+   "id": "twist",
+   "start": 30.97,
+   "length": 8.73,
+   "voiceAt": 0.25,
+   "voiceDur": 8.19
+  },
+  {
+   "id": "end",
+   "start": 39.7,
+   "length": 8.98,
+   "voiceAt": 0.25,
+   "voiceDur": 5.13
+  }
+ ],
+ "words": [
+  {
+   "scene": "hook",
+   "i": 0,
+   "text": "How",
+   "start": 0.45,
+   "end": 0.5
+  },
+  {
+   "scene": "hook",
+   "i": 1,
+   "text": "do",
+   "start": 0.5,
+   "end": 0.63
+  },
+  {
+   "scene": "hook",
+   "i": 2,
+   "text": "two",
+   "start": 0.63,
+   "end": 0.83
+  },
+  {
+   "scene": "hook",
+   "i": 3,
+   "text": "strangers",
+   "start": 0.83,
+   "end": 1.45
+  },
+  {
+   "scene": "hook",
+   "i": 4,
+   "text": "agree",
+   "start": 1.45,
+   "end": 1.79
+  },
+  {
+   "scene": "hook",
+   "i": 5,
+   "text": "on",
+   "start": 1.79,
+   "end": 1.91
+  },
+  {
+   "scene": "hook",
+   "i": 6,
+   "text": "a",
+   "start": 1.93,
+   "end": 1.99
+  },
+  {
+   "scene": "hook",
+   "i": 7,
+   "text": "secret",
+   "start": 1.99,
+   "end": 2.34
+  },
+  {
+   "scene": "hook",
+   "i": 8,
+   "text": "when",
+   "start": 2.65,
+   "end": 2.79
+  },
+  {
+   "scene": "hook",
+   "i": 9,
+   "text": "a",
+   "start": 2.79,
+   "end": 2.87
+  },
+  {
+   "scene": "hook",
+   "i": 10,
+   "text": "spy",
+   "start": 2.87,
+   "end": 3.12
+  },
+  {
+   "scene": "hook",
+   "i": 11,
+   "text": "hears",
+   "start": 3.12,
+   "end": 3.49
+  },
+  {
+   "scene": "hook",
+   "i": 12,
+   "text": "every",
+   "start": 3.56,
+   "end": 3.94
+  },
+  {
+   "scene": "hook",
+   "i": 13,
+   "text": "word?",
+   "start": 3.94,
+   "end": 4.3
+  },
+  {
+   "scene": "history",
+   "i": 0,
+   "text": "In",
+   "start": 5.07,
+   "end": 5.08
+  },
+  {
+   "scene": "history",
+   "i": 1,
+   "text": "1976,",
+   "start": 5.08,
+   "end": 6.02
+  },
+  {
+   "scene": "history",
+   "i": 2,
+   "text": "Diffie",
+   "start": 6.02,
+   "end": 6.42
+  },
+  {
+   "scene": "history",
+   "i": 3,
+   "text": "and",
+   "start": 6.42,
+   "end": 6.64
+  },
+  {
+   "scene": "history",
+   "i": 4,
+   "text": "Hellman",
+   "start": 6.64,
+   "end": 7.09
+  },
+  {
+   "scene": "history",
+   "i": 5,
+   "text": "published",
+   "start": 7.09,
+   "end": 7.74
+  },
+  {
+   "scene": "history",
+   "i": 6,
+   "text": "a",
+   "start": 7.79,
+   "end": 7.85
+  },
+  {
+   "scene": "history",
+   "i": 7,
+   "text": "way",
+   "start": 7.85,
+   "end": 8.17
+  },
+  {
+   "scene": "history",
+   "i": 8,
+   "text": "to",
+   "start": 8.17,
+   "end": 8.38
+  },
+  {
+   "scene": "history",
+   "i": 9,
+   "text": "do",
+   "start": 8.38,
+   "end": 8.47
+  },
+  {
+   "scene": "history",
+   "i": 10,
+   "text": "it.",
+   "start": 8.52,
+   "end": 8.99
+  },
+  {
+   "scene": "history",
+   "i": 11,
+   "text": "Think",
+   "start": 8.99,
+   "end": 9.26
+  },
+  {
+   "scene": "history",
+   "i": 12,
+   "text": "of",
+   "start": 9.26,
+   "end": 9.37
+  },
+  {
+   "scene": "history",
+   "i": 13,
+   "text": "it",
+   "start": 9.37,
+   "end": 9.48
+  },
+  {
+   "scene": "history",
+   "i": 14,
+   "text": "as",
+   "start": 9.48,
+   "end": 9.59
+  },
+  {
+   "scene": "history",
+   "i": 15,
+   "text": "mixing",
+   "start": 9.59,
+   "end": 9.91
+  },
+  {
+   "scene": "history",
+   "i": 16,
+   "text": "paint.",
+   "start": 9.92,
+   "end": 10.23
+  },
+  {
+   "scene": "mix",
+   "i": 0,
+   "text": "Alice",
+   "start": 11.02,
+   "end": 11.23
+  },
+  {
+   "scene": "mix",
+   "i": 1,
+   "text": "and",
+   "start": 11.23,
+   "end": 11.44
+  },
+  {
+   "scene": "mix",
+   "i": 2,
+   "text": "Bob",
+   "start": 11.44,
+   "end": 11.65
+  },
+  {
+   "scene": "mix",
+   "i": 3,
+   "text": "share",
+   "start": 11.79,
+   "end": 12.0
+  },
+  {
+   "scene": "mix",
+   "i": 4,
+   "text": "one",
+   "start": 12.0,
+   "end": 12.17
+  },
+  {
+   "scene": "mix",
+   "i": 5,
+   "text": "public",
+   "start": 12.23,
+   "end": 12.63
+  },
+  {
+   "scene": "mix",
+   "i": 6,
+   "text": "yellow.",
+   "start": 12.63,
+   "end": 13.12
+  },
+  {
+   "scene": "mix",
+   "i": 7,
+   "text": "Secretly,",
+   "start": 13.5,
+   "end": 14.3
+  },
+  {
+   "scene": "mix",
+   "i": 8,
+   "text": "Alice",
+   "start": 14.33,
+   "end": 14.65
+  },
+  {
+   "scene": "mix",
+   "i": 9,
+   "text": "stirs",
+   "start": 14.65,
+   "end": 15.0
+  },
+  {
+   "scene": "mix",
+   "i": 10,
+   "text": "in",
+   "start": 15.0,
+   "end": 15.14
+  },
+  {
+   "scene": "mix",
+   "i": 11,
+   "text": "red",
+   "start": 15.14,
+   "end": 15.35
+  },
+  {
+   "scene": "mix",
+   "i": 12,
+   "text": "and",
+   "start": 15.35,
+   "end": 15.55
+  },
+  {
+   "scene": "mix",
+   "i": 13,
+   "text": "Bob",
+   "start": 15.56,
+   "end": 15.76
+  },
+  {
+   "scene": "mix",
+   "i": 14,
+   "text": "stirs",
+   "start": 15.76,
+   "end": 16.14
+  },
+  {
+   "scene": "mix",
+   "i": 15,
+   "text": "in",
+   "start": 16.16,
+   "end": 16.32
+  },
+  {
+   "scene": "mix",
+   "i": 16,
+   "text": "blue.",
+   "start": 16.32,
+   "end": 16.83
+  },
+  {
+   "scene": "mix",
+   "i": 17,
+   "text": "They",
+   "start": 17.1,
+   "end": 17.19
+  },
+  {
+   "scene": "mix",
+   "i": 18,
+   "text": "swap",
+   "start": 17.19,
+   "end": 17.42
+  },
+  {
+   "scene": "mix",
+   "i": 19,
+   "text": "pots",
+   "start": 17.42,
+   "end": 17.65
+  },
+  {
+   "scene": "mix",
+   "i": 20,
+   "text": "in",
+   "start": 17.65,
+   "end": 17.76
+  },
+  {
+   "scene": "mix",
+   "i": 21,
+   "text": "plain",
+   "start": 17.76,
+   "end": 18.05
+  },
+  {
+   "scene": "mix",
+   "i": 22,
+   "text": "sight.",
+   "start": 18.05,
+   "end": 18.55
+  },
+  {
+   "scene": "match",
+   "i": 0,
+   "text": "Alice",
+   "start": 19.32,
+   "end": 19.55
+  },
+  {
+   "scene": "match",
+   "i": 1,
+   "text": "and",
+   "start": 19.55,
+   "end": 19.76
+  },
+  {
+   "scene": "match",
+   "i": 2,
+   "text": "Bob",
+   "start": 19.76,
+   "end": 19.97
+  },
+  {
+   "scene": "match",
+   "i": 3,
+   "text": "each",
+   "start": 19.97,
+   "end": 20.22
+  },
+  {
+   "scene": "match",
+   "i": 4,
+   "text": "add",
+   "start": 20.27,
+   "end": 20.46
+  },
+  {
+   "scene": "match",
+   "i": 5,
+   "text": "their",
+   "start": 20.46,
+   "end": 20.8
+  },
+  {
+   "scene": "match",
+   "i": 6,
+   "text": "own",
+   "start": 20.8,
+   "end": 21.01
+  },
+  {
+   "scene": "match",
+   "i": 7,
+   "text": "secret",
+   "start": 21.09,
+   "end": 21.44
+  },
+  {
+   "scene": "match",
+   "i": 8,
+   "text": "again,",
+   "start": 21.44,
+   "end": 21.98
+  },
+  {
+   "scene": "match",
+   "i": 9,
+   "text": "and",
+   "start": 21.98,
+   "end": 22.19
+  },
+  {
+   "scene": "match",
+   "i": 10,
+   "text": "both",
+   "start": 22.19,
+   "end": 22.47
+  },
+  {
+   "scene": "match",
+   "i": 11,
+   "text": "pots",
+   "start": 22.47,
+   "end": 22.75
+  },
+  {
+   "scene": "match",
+   "i": 12,
+   "text": "match",
+   "start": 22.75,
+   "end": 23.09
+  },
+  {
+   "scene": "match",
+   "i": 13,
+   "text": "exactly.",
+   "start": 23.09,
+   "end": 23.84
+  },
+  {
+   "scene": "match",
+   "i": 14,
+   "text": "That",
+   "start": 23.93,
+   "end": 24.08
+  },
+  {
+   "scene": "match",
+   "i": 15,
+   "text": "color",
+   "start": 24.08,
+   "end": 24.42
+  },
+  {
+   "scene": "match",
+   "i": 16,
+   "text": "is",
+   "start": 24.42,
+   "end": 24.56
+  },
+  {
+   "scene": "match",
+   "i": 17,
+   "text": "their",
+   "start": 24.56,
+   "end": 24.8
+  },
+  {
+   "scene": "match",
+   "i": 18,
+   "text": "key.",
+   "start": 24.8,
+   "end": 25.28
+  },
+  {
+   "scene": "spy",
+   "i": 0,
+   "text": "The",
+   "start": 26.05,
+   "end": 26.16
+  },
+  {
+   "scene": "spy",
+   "i": 1,
+   "text": "spy",
+   "start": 26.16,
+   "end": 26.39
+  },
+  {
+   "scene": "spy",
+   "i": 2,
+   "text": "mixes",
+   "start": 26.39,
+   "end": 26.77
+  },
+  {
+   "scene": "spy",
+   "i": 3,
+   "text": "the",
+   "start": 26.77,
+   "end": 26.95
+  },
+  {
+   "scene": "spy",
+   "i": 4,
+   "text": "two",
+   "start": 27.05,
+   "end": 27.24
+  },
+  {
+   "scene": "spy",
+   "i": 5,
+   "text": "swapped",
+   "start": 27.24,
+   "end": 27.75
+  },
+  {
+   "scene": "spy",
+   "i": 6,
+   "text": "pots",
+   "start": 27.82,
+   "end": 27.9
+  },
+  {
+   "scene": "spy",
+   "i": 7,
+   "text": "and",
+   "start": 28.21,
+   "end": 28.31
+  },
+  {
+   "scene": "spy",
+   "i": 8,
+   "text": "gets",
+   "start": 28.31,
+   "end": 28.53
+  },
+  {
+   "scene": "spy",
+   "i": 9,
+   "text": "the",
+   "start": 28.58,
+   "end": 28.74
+  },
+  {
+   "scene": "spy",
+   "i": 10,
+   "text": "wrong",
+   "start": 28.74,
+   "end": 29.05
+  },
+  {
+   "scene": "spy",
+   "i": 11,
+   "text": "colour",
+   "start": 29.05,
+   "end": 29.2
+  },
+  {
+   "scene": "spy",
+   "i": 12,
+   "text": "with",
+   "start": 29.52,
+   "end": 29.68
+  },
+  {
+   "scene": "spy",
+   "i": 13,
+   "text": "double",
+   "start": 29.68,
+   "end": 30.02
+  },
+  {
+   "scene": "spy",
+   "i": 14,
+   "text": "the",
+   "start": 30.03,
+   "end": 30.2
+  },
+  {
+   "scene": "spy",
+   "i": 15,
+   "text": "yellow.",
+   "start": 30.2,
+   "end": 30.57
+  },
+  {
+   "scene": "twist",
+   "i": 0,
+   "text": "Unmixing",
+   "start": 31.33,
+   "end": 31.83
+  },
+  {
+   "scene": "twist",
+   "i": 1,
+   "text": "a",
+   "start": 31.83,
+   "end": 31.92
+  },
+  {
+   "scene": "twist",
+   "i": 2,
+   "text": "pot",
+   "start": 31.92,
+   "end": 32.14
+  },
+  {
+   "scene": "twist",
+   "i": 3,
+   "text": "is",
+   "start": 32.16,
+   "end": 32.32
+  },
+  {
+   "scene": "twist",
+   "i": 4,
+   "text": "the",
+   "start": 32.32,
+   "end": 32.56
+  },
+  {
+   "scene": "twist",
+   "i": 5,
+   "text": "hard",
+   "start": 32.56,
+   "end": 32.87
+  },
+  {
+   "scene": "twist",
+   "i": 6,
+   "text": "part.",
+   "start": 32.87,
+   "end": 33.38
+  },
+  {
+   "scene": "twist",
+   "i": 7,
+   "text": "With",
+   "start": 33.47,
+   "end": 33.59
+  },
+  {
+   "scene": "twist",
+   "i": 8,
+   "text": "today's",
+   "start": 33.59,
+   "end": 33.96
+  },
+  {
+   "scene": "twist",
+   "i": 9,
+   "text": "whole",
+   "start": 33.96,
+   "end": 34.23
+  },
+  {
+   "scene": "twist",
+   "i": 10,
+   "text": "number",
+   "start": 34.23,
+   "end": 34.54
+  },
+  {
+   "scene": "twist",
+   "i": 11,
+   "text": "keys,",
+   "start": 34.58,
+   "end": 35.16
+  },
+  {
+   "scene": "twist",
+   "i": 12,
+   "text": "over",
+   "start": 35.17,
+   "end": 35.36
+  },
+  {
+   "scene": "twist",
+   "i": 13,
+   "text": "600",
+   "start": 35.37,
+   "end": 35.86
+  },
+  {
+   "scene": "twist",
+   "i": 14,
+   "text": "digits",
+   "start": 35.86,
+   "end": 36.24
+  },
+  {
+   "scene": "twist",
+   "i": 15,
+   "text": "long,",
+   "start": 36.26,
+   "end": 36.82
+  },
+  {
+   "scene": "twist",
+   "i": 16,
+   "text": "nobody",
+   "start": 36.94,
+   "end": 37.21
+  },
+  {
+   "scene": "twist",
+   "i": 17,
+   "text": "knows",
+   "start": 37.21,
+   "end": 37.53
+  },
+  {
+   "scene": "twist",
+   "i": 18,
+   "text": "a",
+   "start": 37.53,
+   "end": 37.55
+  },
+  {
+   "scene": "twist",
+   "i": 19,
+   "text": "fast",
+   "start": 37.63,
+   "end": 37.85
+  },
+  {
+   "scene": "twist",
+   "i": 20,
+   "text": "way",
+   "start": 37.85,
+   "end": 38.04
+  },
+  {
+   "scene": "twist",
+   "i": 21,
+   "text": "on",
+   "start": 38.04,
+   "end": 38.17
+  },
+  {
+   "scene": "twist",
+   "i": 22,
+   "text": "ordinary",
+   "start": 38.17,
+   "end": 38.59
+  },
+  {
+   "scene": "twist",
+   "i": 23,
+   "text": "computers.",
+   "start": 39.07,
+   "end": 39.3
+  },
+  {
+   "scene": "end",
+   "i": 0,
+   "text": "Your",
+   "start": 40.08,
+   "end": 40.22
+  },
+  {
+   "scene": "end",
+   "i": 1,
+   "text": "browser's",
+   "start": 40.22,
+   "end": 40.83
+  },
+  {
+   "scene": "end",
+   "i": 2,
+   "text": "padlock",
+   "start": 40.83,
+   "end": 41.3
+  },
+  {
+   "scene": "end",
+   "i": 3,
+   "text": "runs",
+   "start": 41.3,
+   "end": 41.57
+  },
+  {
+   "scene": "end",
+   "i": 4,
+   "text": "a",
+   "start": 41.57,
+   "end": 41.64
+  },
+  {
+   "scene": "end",
+   "i": 5,
+   "text": "version",
+   "start": 41.64,
+   "end": 42.1
+  },
+  {
+   "scene": "end",
+   "i": 6,
+   "text": "of",
+   "start": 42.18,
+   "end": 42.25
+  },
+  {
+   "scene": "end",
+   "i": 7,
+   "text": "this",
+   "start": 42.25,
+   "end": 42.4
+  },
+  {
+   "scene": "end",
+   "i": 8,
+   "text": "trick.",
+   "start": 42.53,
+   "end": 43.07
+  },
+  {
+   "scene": "end",
+   "i": 9,
+   "text": "The",
+   "start": 43.07,
+   "end": 43.2
+  },
+  {
+   "scene": "end",
+   "i": 10,
+   "text": "secret",
+   "start": 43.2,
+   "end": 43.45
+  },
+  {
+   "scene": "end",
+   "i": 11,
+   "text": "itself",
+   "start": 43.47,
+   "end": 43.79
+  },
+  {
+   "scene": "end",
+   "i": 12,
+   "text": "never",
+   "start": 43.79,
+   "end": 44.05
+  },
+  {
+   "scene": "end",
+   "i": 13,
+   "text": "crossed",
+   "start": 44.05,
+   "end": 44.43
+  },
+  {
+   "scene": "end",
+   "i": 14,
+   "text": "the",
+   "start": 44.43,
+   "end": 44.59
+  },
+  {
+   "scene": "end",
+   "i": 15,
+   "text": "room.",
+   "start": 44.59,
+   "end": 45.08
+  }
+ ]
+}

@@ -4,6 +4,32 @@ One standalone composition (`compositions/world.html`, a full HTML document — 
 bottom of the stack for the whole film. Every other scene is an HTML layer above it. Pattern copied from the
 HyperFrames registry block `glass-hero` (`npx hyperframes add glass-hero` to read it).
 
+## Start from `templates/world-studio.template.html`
+
+It is the generic base, built from the Diffie–Hellman rebuild after the first cut looked "vibecoded" (text colliding,
+whip pans, a flat black void). `templates/world.template.html` (the attention video's word panels) is still a good
+reference for panels, threads and fields, but its sprite labels and keyed camera with `cut: true` are the old way.
+
+Four rules the studio template enforces:
+
+1. **No readable text inside WebGL.** `hyperframes check` audits DOM text only; text in a canvas or sprite is
+   invisible to it, so collisions ship. Labels are DOM elements in `#world-labels`, positioned every frame by
+   `placeLabels([{id, text, at: Vector3, dy, op, pri}])`: it projects the 3D anchor, clamps the label into the
+   `STAGE` zone (x 130–770, y 480–1010; see `platform.md`), and moves it down/up or hides it rather than letting two
+   labels overlap (higher `pri` places first). Text that is *part of an object* (a word printed on a panel) may stay a
+   texture.
+2. **The camera is a sampled spline.** Write a few keys `(t, position, look-at)` and build the path with
+   `scripts/camera_path.py` (C1-continuous Hermite, sampled at 30 fps, injected as `CFG.camPath`). It refuses moves
+   faster than 2.6 units/s or 30°/s. No `cut: true` inside the world: start long moves under the end of the previous
+   sentence instead. `check_film.py` then measures the render for whips and hard cuts.
+3. **A set, not a void.** Gradient backdrop shader (warm low glow behind the table, cool edge), a fogged stone
+   tabletop that fades at its edge, a *small* mirror only under the hero (a `Reflector` ignores fog, so a big one
+   shows as a dark band at the horizon), a soft warm backlight halo, round dust that shrinks near the camera (square
+   instanced planes become big squares in close-ups), and a DOM vignette above the canvas.
+4. **Every shader and state value is finite.** One NaN pixel becomes a black frame after bloom. Two real causes:
+   `pow(x, 2.0)` of a negative `x` in GLSL (write `x * x`), and an anchor the generator never defined
+   (`A.hkSecret` → `undefined` → NaN opacity). Make generators fail on missing anchors.
+
 ## Contract
 
 ```html
@@ -53,10 +79,10 @@ HyperFrames registry block `glass-hero` (`npx hyperframes add glass-hero` to rea
 
 - In 9:16, a sentence of panels reads best as a **centred multi-line block** seen from a slow 3/4 dolly. A row
   receding down a hall (like the reference's clocks) bunches far panels into an unreadable cluster.
-- Keep the block between y ≈ 400 and 1150 px on screen and **inside x 153–927** once it reaches y 803 (the TikTok
-  and Reels button column; see `platform.md`). Measure the projected size at the end of each push. Captions own
-  y ≈ 1180–1460 at max 774 px wide; counters and bars sit at y 300–420 (not above 212). Lower the camera's look-at
-  target to raise the block in frame.
+- Keep the hero inside the stage zone, y ≈ 480–1010, and inside x 130–770 below y 840 (see `platform.md`). Measure
+  the projected size at the end of each push. Captions own y ≈ 1040–1248; headers y 288–480. Lower the camera's
+  look-at target to raise the hero in frame (about 0.4 units ≈ 130 px at 6 units away with a 52° lens).
+- A 52° vertical lens at ~6.5 units frames three objects spread over ±1 unit with margin; 46° crops them.
 - Fog density ≈ 0.036 for close shots, ≈ 0.011 for the big overview; animate it with the camera.
 
 ## State from a simulation, events for pacing

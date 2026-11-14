@@ -104,6 +104,35 @@ def analyse(path):
     return blacks, freezes, loud
 
 
+def motion_profile(path):
+    """Mean absolute luma change between consecutive frames (270x480 grey, 0-255 scale)."""
+    import re as _re
+    r = sh(["ffmpeg", "-hide_banner", "-nostats", "-i", path, "-an", "-vf",
+            "scale=270:480,format=gray,tblend=all_mode=difference,signalstats,metadata=print:key=lavfi.signalstats.YAVG",
+            "-f", "null", "-"], text=True)
+    return [float(v) for v in _re.findall(r"YAVG=([\d.]+)", r.stderr)]
+
+
+def motion_jumps(diffs, fps, cfg):
+    """Whips: runs of >= minFrames frames changing by more than `whip`. Cuts: one frame above `cut` between quiet ones."""
+    whips, cuts, run = [], [], None
+    for i, v in enumerate(diffs):
+        if v > cfg["whip"]:
+            run = [i, i, v] if run is None else [run[0], i, max(run[2], v)]
+        else:
+            if run and run[1] - run[0] + 1 >= cfg["minFrames"]:
+                whips.append(run)
+            run = None
+        before = diffs[i - 1] if i else 0
+        after = diffs[i + 1] if i + 1 < len(diffs) else 0
+        if v > cfg["cut"] and before < cfg["cut"] / 3 and after < cfg["cut"] / 3:
+            cuts.append((i, v))
+    if run and run[1] - run[0] + 1 >= cfg["minFrames"]:
+        whips.append(run)
+    t = lambda i: (i + 1) / fps
+    return ([(round(t(a), 2), round(t(b), 2), round(p, 1)) for a, b, p in whips], [(round(t(i), 2), round(v, 1)) for i, v in cuts])
+
+
 def frame0_luma(path):
     p = sh(["ffmpeg", "-v", "error", "-i", path, "-frames:v", "1",
             "-vf", "scale=270:480:out_range=full,format=gray", "-f", "rawvideo", "-"])
@@ -223,6 +252,14 @@ def check(path, project=None, profile="both"):
           f"none > {tv('freezeDetect')['d']}s, <= {lim}s/30s",
           (fmt(body) + (" (hold excluded" + (" from timeline)" if last_word is not None else ", assumed last 4 s)"))) if body
           else ("hold excluded" if fz else ""))
+
+    mj = tv("motionJumps")
+    diffs = motion_profile(path)
+    if diffs:
+        whips, cuts = motion_jumps(diffs, fps or 30, mj)
+        R.add("motion.whips", "warn" if whips else "pass", len(whips), 0,
+              ", ".join(f"{a}-{b}s (peak {p})" for a, b, p in whips) or f"peak frame change {max(diffs):.1f}")
+        R.add("motion.hard_cuts", "warn" if cuts else "pass", len(cuts), 0, ", ".join(f"{a}s ({v})" for a, v in cuts))
 
     L = tv("loudness")
     if loud["I"] is None:

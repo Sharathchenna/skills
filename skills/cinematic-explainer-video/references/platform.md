@@ -4,23 +4,32 @@ Rules for publishing a 1080×1920 short on TikTok and Reels. The numbers come fr
 [shorts-kit](https://github.com/howznguyen/shorts-kit) (MIT), measured from iOS screenshots. Check them again
 whenever an app changes its layout. YouTube Shorts fits inside these numbers too.
 
-## Safe zones (the hard part)
+## Safe zones and layout zones (the hard part)
 
-| Edge | TikTok | Reels | **Use** |
+The gate is `npx hyperframes check`, which warns when DOM text leaves these clear bands (its built-in numbers,
+scaled to 1080×1920):
+
+| Platform | Clear band |
+| --- | --- |
+| TikTok | y 240–840: x 120–960 · y 840–1260: x 120–780 (the like/comment/share rail) |
+| Instagram Reels | y 269–1248, x 65–1015 |
+| YouTube Shorts | y 288–1248, x 48–888 |
+
+Lay every film out in four zones that sit inside all of them:
+
+| Zone | y | x | What goes there |
 | --- | --- | --- | --- |
-| Top bar reaches down to | y 132 | y 212 | **text at y ≥ 212** (titles start ≈ 300) |
-| Right button column (like, comment, share) | x ≥ 949 from y 803 down | x ≥ 927 from y 1114 down | **nothing readable at x ≥ 927 when y ≥ 803** |
-| Post text area starts | y 1749 | y 1726 | **text at y ≤ 1726** |
+| Header | 288–480 | 120–888 | the hook title, the equation, the one line of on-frame data. One block at a time |
+| Stage | 480–1010 | 130–770 (130–888 above y 840) | the hero object and its DOM labels (`placeLabels` clamps them here) |
+| Captions | 1040–1248 | centred, max width 660 | captions only |
+| Below 1248 | — | — | nothing anyone must read (platform UI covers it); the "illustrative" footnote at most |
 
-- **The widest centred panel is 774 px** (x 153–927). An 880 px centred panel puts 31 px under the like button.
-- **Captions need a max width of 774 px, centred.** Keep the caption band at y ≈ 1180–1460. The old example used
-  y 1214–1270 with no width cap, so a long line ran under the button column.
-- **Size things for their final scale.** A 774 px column that a camera push scales ×1.075 becomes 832 px and
-  crosses x 927. 3D blocks count too: measure the projected size at the end of each push.
-- The 3D world, photos and backgrounds may fill the whole frame. Only **text and key details** must stay inside
-  the zones.
-- Check with pixels, not just CSS values: `python3 -I scripts/check_film.py out.mp4 --sheet sheet.png` draws the
-  zones over a contact sheet. Delete old stills after a fix, because a stale still looks the same and lies.
+- Earlier versions of this file used shorts-kit's iOS measurements (text to y 1726, rail at x 927). HyperFrames'
+  bands are stricter and automated, so they win.
+- The 3D world, photos and backgrounds may fill the whole frame. Only **text** must stay in its zone.
+- Size things for their final scale: a block that a camera push scales ×1.1 grows past its zone.
+- Check with `npx hyperframes check --json --samples 40` (overlaps, safe zones, contrast) and look at
+  `check_film.py --sheet` (draws the zones over a contact sheet). Delete old stills after a fix.
 
 ## Frame 0 and the cover are different jobs
 

@@ -1,0 +1,112 @@
+{
+ "mode": "cs",
+ "notes": {
+  "voice": "Fish Audio Documentary c3958f083c2d407982263c77cfa831e3",
+  "model": "s2.1-pro-free",
+  "speed": 0.9
+ },
+ "scenes": [
+  {
+   "id": "hook",
+   "text": "How do two strangers agree on a secret when a spy hears every word?",
+   "facts": [
+    "f-0007"
+   ],
+   "onscreen": [
+    "A secret, out loud?",
+    "illustrative: paint and toy numbers"
+   ]
+  },
+  {
+   "id": "history",
+   "text": "In 1976, Diffie and Hellman published a way to do it. Think of it as mixing paint.",
+   "facts": [
+    "f-0001",
+    "f-0007",
+    "f-0008"
+   ],
+   "onscreen": [
+    "Whitfield Diffie & Martin Hellman",
+    "Diffie & Hellman · 1976",
+    "New Directions in Cryptography",
+    "IEEE Trans. Inf. Theory, Nov 1976",
+    "Ralph Merkle: independent work",
+    "illustrative: paint and toy numbers"
+   ]
+  },
+  {
+   "id": "mix",
+   "text": "Alice and Bob share one public yellow. Secretly, Alice stirs in red and Bob stirs in blue. They swap pots in plain sight.",
+   "facts": [
+    "f-0006",
+    "f-0007"
+   ],
+   "onscreen": [
+    "public: 5, mod 23",
+    "secret 6",
+    "secret 15",
+    "5⁶ mod 23 = 8",
+    "5¹⁵ mod 23 = 19",
+    "toy numbers · illustrative",
+    "Alice sends 5⁶ mod 23 = 8",
+    "Bob sends 5¹⁵ mod 23 = 19"
+   ]
+  },
+  {
+   "id": "match",
+   "text": "Alice and Bob each add their own secret again, and both pots match exactly. That colour is their key.",
+   "facts": [
+    "f-0006",
+    "f-0007"
+   ],
+   "onscreen": [
+    "19⁶ mod 23 = 2",
+    "8¹⁵ mod 23 = 2",
+    "key = 2",
+    "illustrative: paint and toy numbers"
+   ]
+  },
+  {
+   "id": "spy",
+   "text": "The spy mixes the two swapped pots and gets the wrong colour, with double the yellow.",
+   "facts": [
+    "f-0006",
+    "f-0007"
+   ],
+   "onscreen": [
+    "8 × 19 mod 23 = 14",
+    "14 ≠ 2",
+    "illustrative: paint and toy numbers"
+   ]
+  },
+  {
+   "id": "twist",
+   "text": "Un-mixing a pot is the hard part. With today's whole-number keys, over six hundred digits long, nobody knows a fast way on ordinary computers.",
+   "facts": [
+    "f-0002",
+    "f-0003",
+    "f-0004",
+    "f-0006"
+   ],
+   "onscreen": [
+    "5ˣ mod 23 = 8 → x = ?",
+    "x = 6",
+    "a real 2048-bit prime: 617 digits",
+    "no known fast way",
+    "illustrative: paint and toy numbers",
+    "trying x = … far too slow at this size"
+   ]
+  },
+  {
+   "id": "end",
+   "text": "Your browser's padlock runs a version of this trick. The secret itself never crossed the room.",
+   "facts": [
+    "f-0005"
+   ],
+   "onscreen": [
+    "TLS 1.3",
+    "elliptic-curve Diffie–Hellman"
+   ]
+  }
+ ]
+}

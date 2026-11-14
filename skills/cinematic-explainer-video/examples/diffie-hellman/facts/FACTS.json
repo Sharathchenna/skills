@@ -1,0 +1,112 @@
+[
+ {
+  "id": "f-0001",
+  "claim": "Whitfield Diffie and Martin Hellman published the key-exchange method in 'New Directions in Cryptography', IEEE Transactions on Information Theory, November 1976.",
+  "value": "1976",
+  "quote": "IEEE TRANSACTIONS ON INFORMATION THEORY, VOL. IT-22, NO. 6, NOVEMBER 1976 New Directions in Cryptography Invited Paper WHITFIELD DIFFIE AND MARTIN E. HELLMAN",
+  "location": "page 644, masthead",
+  "status": "verified",
+  "sources": [
+   "s-0001"
+  ],
+  "checkedAt": "2026-11-14",
+  "mustPreempt": "The paper itself credits Ralph Merkle, who independently studied distributing keys over an insecure channel."
+ },
+ {
+  "id": "f-0002",
+  "claim": "The method's security rests on how hard it is to compute logarithms modulo a prime (the 'un-mixing' step).",
+  "value": "logarithms mod q",
+  "quote": "The security of our technique depends crucially on the difficulty of computing logarithms mod q",
+  "location": "Section III",
+  "status": "verified",
+  "sources": [
+   "s-0001"
+  ],
+  "checkedAt": "2026-11-14"
+ },
+ {
+  "id": "f-0003",
+  "claim": "Finding discrete logarithms is generally thought to be hard on a classical computer; Shor (1995) gave an efficient algorithm for a hypothetical quantum computer.",
+  "value": "hard on a classical computer",
+  "quote": "factoring integers and finding discrete logarithms, two problems which are generally thought to be hard on a classical computer ... Efficient randomized algorithms are given for these two problems on a hypothetical quantum computer.",
+  "location": "abstract",
+  "status": "verified",
+  "sources": [
+   "s-0004"
+  ],
+  "checkedAt": "2026-11-14",
+  "mustPreempt": "A large enough quantum computer running Shor's algorithm would break it."
+ },
+ {
+  "id": "f-0004",
+  "claim": "In the classic finite-field version, the smallest standard TLS group (RFC 7919 ffdhe2048) uses a 2048-bit prime with 617 decimal digits (over six hundred). Browsers mostly use the elliptic-curve version with shorter numbers.",
+  "value": "617",
+  "quote": "The 2048-bit group has registry value 256 and is calculated from the following formula: p = 2^2048 - 2^1984 + {[2^1918 * e] + 560316 } * 2^64 - 1",
+  "location": "RFC 7919 Appendix A.1; digit count computed in checks/examples.py",
+  "spokenAs": "over six hundred digits; 2048 bits; 600",
+  "status": "verified",
+  "sources": [
+   "s-0003"
+  ],
+  "checkedAt": "2026-11-14"
+ },
+ {
+  "id": "f-0005",
+  "claim": "TLS 1.3 establishes keys with (EC)DHE, Diffie-Hellman over finite fields or elliptic curves; HTTPS (the browser padlock) is HTTP over TLS.",
+  "value": "(EC)DHE",
+  "quote": "TLS supports three basic key exchange modes: (EC)DHE (Diffie-Hellman over either finite fields or elliptic curves) | RFC 2818: Simply use HTTP over TLS ... HTTP/TLS is differentiated from HTTP URIs by using the 'https' protocol identifier",
+  "location": "RFC 8446 Section 2",
+  "status": "verified",
+  "sources": [
+   "s-0002",
+   "s-0005"
+  ],
+  "checkedAt": "2026-11-14",
+  "mustPreempt": "Most browsers use the elliptic-curve version (e.g. X25519), whose numbers are shorter than 600 digits; the idea is the same."
+ },
+ {
+  "id": "f-0006",
+  "claim": "Toy worked example (illustrative): public prime 23 and base 5; secrets 6 and 15; swapped values 8 and 19; both sides reach 2; the spy multiplying the swapped values gets 14. Trying x = 1..6 finds 5^6 mod 23 = 8.",
+  "value": "p=23 g=5 a=6 b=15 A=8 B=19 shared=2 spy=14",
+  "quote": "computed in checks/examples.py: 5^6 mod 23 = 8, 5^15 mod 23 = 19, 19^6 mod 23 = 2, 8^15 mod 23 = 2, 8*19 mod 23 = 14; tries 5 2 10 4 20 8; x = 1 2 3 4 5 6",
+  "location": "checks/examples.py",
+  "status": "illustrative",
+  "sources": [],
+  "checkedAt": "2026-11-14"
+ },
+ {
+  "id": "f-0007",
+  "claim": "Paint mixing is an analogy (illustrative): mixing is easy, un-mixing is hard; mixing the two swapped pots adds the public colour twice, giving a different colour from the key.",
+  "value": "analogy",
+  "quote": "colours computed in checks/examples.py (geometric-mean pigment mix); shared mix differs from the spy's mix",
+  "location": "checks/examples.py",
+  "status": "illustrative",
+  "sources": [],
+  "checkedAt": "2026-11-14"
+ },
+ {
+  "id": "f-0008",
+  "claim": "Diffie and Hellman's paper credits Ralph Merkle, who independently studied distributing keys over an insecure channel.",
+  "value": "Merkle",
+  "quote": "Merkle [1] has independently studied the problem of distributiug keys over an insecure channel.",
+  "location": "Section III (OCR text as extracted)",
+  "status": "verified",
+  "sources": [
+   "s-0001"
+  ],
+  "checkedAt": "2026-11-14"
+ },
+ {
+  "id": "f-0009",
+  "claim": "Unauthenticated (anonymous) Diffie-Hellman resists a listener but not an active man-in-the-middle; TLS adds authentication (certificates).",
+  "value": "man-in-the-middle",
+  "quote": "If no such mechanism is used, then the connection has no protection against active man-in-the-middle attack",
+  "location": "RFC 8446 Appendix C.5",
+  "status": "verified",
+  "sources": [
+   "s-0002"
+  ],
+  "checkedAt": "2026-11-14",
+  "mustPreempt": "Diffie-Hellman alone stops a listener, not an impostor; certificates handle that."
+ }
+]

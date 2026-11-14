@@ -10,7 +10,7 @@
 | Bar animation stutters / lint `gsap_non_transform_motion` | Tweening `left`/`width` | Full-width segments, animate `x` + `scaleX` |
 | Frame 0 does not show the hidden-state you set | `tl.set(..., 0)` for initial hides | Put initial `opacity: 0` in CSS |
 | Thumbnail is empty | Sentence starts at opacity 0 | Start dim (0.3–0.55) so frame 0 already reads; a title line at the top |
-| Captions overlap the 3D block | Block too low in frame | Lower the look-at target / pull the camera back; captions in the y 1180–1460 band |
+| Captions overlap the 3D block | Block too low in frame | Lower the look-at target / pull the camera back; captions in the y 1040–1248 band |
 | Captions unreadable over a white document | No backing | Scrim on caption groups only during the page scene |
 | Credit lines fail contrast | Small grey text over photos | `data-layout-ignore` + a dark rounded backing |
 | Fish Audio HTTP 402 | Paid model without API credit | header `model: s2.1-pro-free` |
@@ -25,3 +25,10 @@
 | A fixed bug "still" shows in review | Looking at old stills that weren't regenerated | Delete stills after each fix |
 | A truncated MP4 that ffmpeg reported as fine | Piping ffmpeg into `head` | Never pipe ffmpeg output into `head`; read the whole log |
 | A number on screen nobody can source | Wrote the line before the fact | Facts first; every scene cites ledger ids (`facts.md`) |
+| "Alice" sits on top of the caption; an equation runs into a label (Diffie–Hellman v1) | Labels drawn as WebGL sprites: `hyperframes check` can't see canvas text, so it passed | DOM labels via `placeLabels` in the studio template; `hyperframes check --samples 40` |
+| The camera whips across the set in half a second; moves stop dead at each key | Keys 0.5 s apart over 4+ units; eased segments | `camera_path.py` spline with speed limits; start the move earlier; `check_film.py` motion.whips |
+| The whole bloomed frame renders black, but fine with `?nobloom` | A NaN pixel (GLSL `pow()` of a negative, or an undefined anchor) spread by the bloom blur | `x * x` instead of `pow(x, 2.0)`; fail the generator on missing anchors |
+| A dark band across the horizon | A large `Reflector` floor: it ignores fog | Small mirror under the hero only; a fogged tabletop with an alpha edge for the rest |
+| Square blobs drift across close-ups | Untextured instanced dust planes near the camera | Round `GLOW` texture, shrink by distance to the camera |
+| The tools/ template doesn't match what rendered | The agent edited compiled files or regenerated after the render | Treat `tools/` as the source; regenerate before every render; commit before big changes |
+| Rewriting a project's git history deleted the renders | `git filter-branch` checks out the rewritten tree, removing files that are no longer tracked | Add `renders/` to `.gitignore` before the first commit; never rewrite history in a project with unignored outputs |
