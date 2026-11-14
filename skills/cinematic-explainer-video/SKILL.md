@@ -25,6 +25,7 @@ model) or any TTS. Optional: an image-to-video model for truly animated archive 
 | `references/cs-concepts.md` | CS mode: planning card, beat sheet, hook types, simulate-then-render, 16 visual metaphors, series |
 | `references/platform.md` | TikTok/Reels safe zones, frame 0 vs cover, post text and pinned comment, audio targets, retention |
 | `references/three-world.md` | how the 3D world is built and kept frame-exact |
+| `references/backgrounds.md` | how to make the set look expensive: studio lighting, floor, shadows, bokeh, grade (with sources) |
 | `references/review-loop.md` | fresh-critic review loop, rubric, quiz, critic prompts, automated gates |
 | `references/pitfalls.md` | every bug hit so far and its fix |
 

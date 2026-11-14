@@ -22,10 +22,9 @@ Four rules the studio template enforces:
    `scripts/camera_path.py` (C1-continuous Hermite, sampled at 30 fps, injected as `CFG.camPath`). It refuses moves
    faster than 2.6 units/s or 30°/s. No `cut: true` inside the world: start long moves under the end of the previous
    sentence instead. `check_film.py` then measures the render for whips and hard cuts.
-3. **A set, not a void.** Gradient backdrop shader (warm low glow behind the table, cool edge), a fogged stone
-   tabletop that fades at its edge, a *small* mirror only under the hero (a `Reflector` ignores fog, so a big one
-   shows as a dark band at the horizon), a soft warm backlight halo, round dust that shrinks near the camera (square
-   instanced planes become big squares in close-ups), and a DOM vignette above the canvas.
+3. **A studio set, not a void.** Softbox environment (PMREM) for the metal, a satin floor with light pools fogged into
+   a same-colour void, contact shadows instead of a mirror, soft seeded bokeh, ACES, HDR-only bloom, grain + vignette
+   in a grade pass, a 30° lens. Recipes, sources and alternative looks: `backgrounds.md`.
 4. **Every shader and state value is finite.** One NaN pixel becomes a black frame after bloom. Two real causes:
    `pow(x, 2.0)` of a negative `x` in GLSL (write `x * x`), and an anchor the generator never defined
    (`A.hkSecret` → `undefined` → NaN opacity). Make generators fail on missing anchors.

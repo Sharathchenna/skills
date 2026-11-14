@@ -8,8 +8,8 @@ rebuild. Media (voice, music, fonts) is not included.
 | --- | --- | --- |
 | Labels | WebGL sprites; `hyperframes check` couldn't see them, so "Alice" sat on the caption and equations ran into the "spy" label | DOM labels via `placeLabels`, clamped to the stage zone, no overlaps; `hyperframes check --samples 40` clean |
 | Camera | keys 0.5–1 s apart across 4–5 units | `camera_path` spline, max 1.9 units/s and 11°/s |
-| `check_film.py` motion | 5 whips (peak frame change 12.9–15.4) | 0 whips, 0 hard cuts (peak 8.3) |
-| Set | black void, starfield, grid floor, square dust | warm backlit backdrop, fogged stone tabletop, small mirror, round dust, vignette |
+| `check_film.py` motion | 5 whips (peak frame change 12.9–15.4) | 0 whips, 0 hard cuts (v3 peak 5.6) |
+| Set | black void, starfield, grid floor, square dust | v2: gradient backdrop + stone tabletop (still "not great"); **v3: black-glass studio**: softbox environment, satin floor with baked light pools fogged into a void, contact shadows, soft bokeh, ACES, grain + vignette, 30° lens with zoom close-ups (`references/backgrounds.md`) |
 | Zones | captions at y 1190–1312 (outside every platform's clear band) | header 288–480, stage 480–1010, captions 1040–1248 at 660 px |
 
 - `tools/gen.py`: anchors from word times, the camera keys (sampled with a Hermite spline inside the file; the

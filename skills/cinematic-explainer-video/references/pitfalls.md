@@ -32,3 +32,6 @@
 | Square blobs drift across close-ups | Untextured instanced dust planes near the camera | Round `GLOW` texture, shrink by distance to the camera |
 | The tools/ template doesn't match what rendered | The agent edited compiled files or regenerated after the render | Treat `tools/` as the source; regenerate before every render; commit before big changes |
 | Rewriting a project's git history deleted the renders | `git filter-branch` checks out the rewritten tree, removing files that are no longer tracked | Add `renders/` to `.gitignore` before the first commit; never rewrite history in a project with unignored outputs |
+| The background still looks cheap after adding a gradient wall, a halo and a mirror | Nothing for the metal to reflect; an unblurred mirror; a horizon seam | Softbox environment + contact shadows + light pools on a fogged floor (`backgrounds.md`) |
+| Saturated paint looks grey-brown | AgX tone mapping through `OutputPass` (it tone-maps everything) | ACES Filmic at ~1.2 exposure |
+| A lit backdrop wall never shows | Long lens pitched down: the frame behind the hero is floor | Put the light pool on the floor behind the hero |

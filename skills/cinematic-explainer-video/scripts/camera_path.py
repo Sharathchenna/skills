@@ -16,10 +16,12 @@ KEYS is a list of (t, [x, y, z] position, [x, y, z] look-at). In world.html:
       const a = PATH[i], b = PATH[j];
       camera.position.set(lerp(a[0], b[0], u), lerp(a[1], b[1], u), lerp(a[2], b[2], u));
       camera.lookAt(lerp(a[3], b[3], u), lerp(a[4], b[4], u), lerp(a[5], b[5], u));
+      if (a.length > 6) { camera.fov = lerp(a[6], b[6], u); camera.updateProjectionMatrix(); }   // optional zoom
     }
 
 Limits (defaults): 2.6 world units per second and 30 degrees per second of turn, for a set about 3 units wide
-seen from about 6 units away. A move that needs more is a whip: give it more time, start it earlier (under the end
+seen from about 6 units away with a 52-degree lens. Speed limits scale with camera distance: with the studio
+template's 30-degree lens (camera ~13 units away) use max_speed=4.8. A move that needs more is a whip: give it more time, start it earlier (under the end
 of the previous sentence), or make it shorter. Never use a hard cut inside the world.
 
 Run directly for a self-test: python3 -I camera_path.py
@@ -78,8 +80,13 @@ def report(rows, fps=30):
     return worst
 
 
-def build_path(keys, total, fps=30, max_speed=2.6, max_turn=30.0, strict=True):
+def build_path(keys, total, fps=30, max_speed=2.6, max_turn=30.0, strict=True, fov_keys=None):
+    """fov_keys: optional [(t, vertical_fov_degrees)] for zooms; appended as a 7th value per row.
+    Prefer a zoom from the wide position over a dolly in when objects stand between the camera and the subject."""
     rows = sample(keys, total, fps)
+    if fov_keys:
+        fov = sample([(t, [f, 0, 0], [0, 0, 1]) for t, f in fov_keys], total, fps)
+        rows = [r + [round(f[0], 3)] for r, f in zip(rows, fov)]
     r = report(rows, fps)
     print(f"camera: max speed {r['speed']} u/s at {r['speedAt']}s, max turn {r['turn']} deg/s at {r['turnAt']}s")
     if strict and (r["speed"] > max_speed or r["turn"] > max_turn):
@@ -89,8 +96,8 @@ def build_path(keys, total, fps=30, max_speed=2.6, max_turn=30.0, strict=True):
 
 if __name__ == "__main__":
     slow = [(0, [0, 3, 6.6], [0, 0, -0.3]), (5, [0.3, 2.9, 6.2], [0, 0, -0.3]), (10, [0, 2.6, 2.6], [0, 0.3, -1.2])]
-    rows, r = build_path(slow, 10)
-    assert len(rows) == 301 and r["speed"] < 2.6, r
+    rows, r = build_path(slow, 10, fov_keys=[(0, 30), (5, 30), (10, 12)])
+    assert len(rows) == 301 and r["speed"] < 2.6 and len(rows[0]) == 7 and abs(rows[-1][6] - 12) < 0.01, r
     whip = [(0, [0, 3, 6.6], [0, 0, -0.3]), (5, [0, 3, 6.6], [0, 0, -0.3]), (5.5, [0, 2.6, 1.0], [0, 0.3, -1.2])]
     try:
         build_path(whip, 6)

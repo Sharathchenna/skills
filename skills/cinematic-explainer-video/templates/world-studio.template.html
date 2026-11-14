@@ -1,14 +1,18 @@
 <!doctype html>
 <!--
-  World (studio set): the film's whole 3D set, mounted under every HTML layer. Built from the Diffie–Hellman rebuild.
-  What is generic here and should stay:
+  World (studio set): the film's whole 3D set, mounted under every HTML layer. Built from the Diffie–Hellman rebuild
+  and the "black-glass studio" look found in pmndrs/drei, three.js RoomEnvironment and HyperFrames' product-turntable.
+  Keep these generic parts:
     - render(t) is a pure function of t; all randomness is seeded; the GSAP clock drives it (seek-safe).
-    - The camera plays back a path sampled by scripts/camera_path.py (CFG.camPath, CFG.fps): smooth and speed-checked.
-    - Labels are DOM text (#world-labels) placed from 3D anchors by placeLabels(): kept inside the STAGE zone and never
-      overlapping each other, so `npx hyperframes check` can audit them. Never draw readable text into WebGL.
-    - The set: gradient backdrop (no pow() of negatives in shaders: NaN turns the whole bloomed frame black),
-      a fogged stone tabletop with a small mirror under the hero, a warm backlight halo, soft dust, a DOM vignette.
-  Replace the HERO section with your recurring object, and the render loop's middle with your story states.
+    - Camera: plays back a path sampled by scripts/camera_path.py (CFG.camPath, CFG.fps). 30-degree lens.
+    - Labels: DOM text (#world-labels) placed from 3D anchors by placeLabels(), clamped to the STAGE zone and never
+      overlapping, so `npx hyperframes check` audits them. Never draw readable text into WebGL.
+    - Set: a lightformer environment (emissive softbox panels -> PMREM) so dark metal reads as metal; a satin floor with
+      a pool of light under the hero and a warm pool behind it, fogged into a void of the same colour; contact shadows
+      instead of a mirror; seeded out-of-focus bokeh; ACES; bloom only on HDR (> 1) values; a grade pass with grain
+      (seeded by frame) and vignette; MSAA in a half-float target. See references/backgrounds.md.
+    - No NaN anywhere (GLSL pow() of negatives, undefined anchors): one NaN pixel turns the bloomed frame black.
+  Replace the HERO section with your recurring object, and the middle of render(t) with your story states.
 -->
 <html lang="en">
   <head>
@@ -37,7 +41,6 @@
   <body>
     <div id="world-root" data-composition-id="world" data-start="0" data-duration="__DUR__" data-width="1080" data-height="1920">
       <canvas id="world-canvas" class="clip" data-start="0" data-duration="__DUR__" data-track-index="1" width="1080" height="1920" data-layout-ignore></canvas>
-      <div id="world-vignette" data-layout-ignore></div>
       <div id="world-labels"></div>
     </div>
 
@@ -61,7 +64,9 @@
     <script type="module">
       import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.184.0/+esm";
       const CDN = "https://cdn.jsdelivr.net/npm/three@0.184.0/examples/jsm/";
-      let Reflector = null, EffectComposer = null, RenderPass = null, UnrealBloomPass = null, OutputPass = null;
+      let Reflector = null, EffectComposer = null, RenderPass = null, UnrealBloomPass = null, OutputPass = null, ShaderPass = null;
+      const { HorizontalBlurShader } = await import(CDN + "shaders/HorizontalBlurShader.js/+esm");
+      const { VerticalBlurShader } = await import(CDN + "shaders/VerticalBlurShader.js/+esm");
       const DBG = new URLSearchParams(location.search);
       if (!DBG.has("noreflect")) try { ({ Reflector } = await import(CDN + "objects/Reflector.js/+esm")); } catch (e) { console.error("[world] reflector unavailable", e); }
       if (!DBG.has("nobloom")) try {
@@ -69,6 +74,7 @@
         ({ RenderPass } = await import(CDN + "postprocessing/RenderPass.js/+esm"));
         ({ UnrealBloomPass } = await import(CDN + "postprocessing/UnrealBloomPass.js/+esm"));
         ({ OutputPass } = await import(CDN + "postprocessing/OutputPass.js/+esm"));
+        ({ ShaderPass } = await import(CDN + "postprocessing/ShaderPass.js/+esm"));
       } catch (e) { console.error("[world] postprocessing unavailable", e); EffectComposer = null; }
 
       const host = window.__world;
@@ -96,21 +102,37 @@
       renderer.setPixelRatio(1);
       renderer.setSize(W, H, false);
       renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.toneMapping = THREE.NoToneMapping;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.2;   // ACES keeps the paint saturated (AgX washed it out)
       const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x07080b);
-      scene.fog = new THREE.FogExp2(0x17110c, 0.07);
-      const camera = new THREE.PerspectiveCamera(52, W / H, 0.05, 300);
+      scene.background = new THREE.Color(0x060508);
+      scene.fog = new THREE.Fog(0x060508, 12, 26);   // same colour as the void: the cyclorama dissolves, no horizon
+      const camera = new THREE.PerspectiveCamera(30, W / H, 0.05, 300)   // long lens: compressed, studio look;
 
-      let composer = null;
+      let composer = null, grade = null;
       if (EffectComposer) {
         try {
-          composer = new EffectComposer(renderer);
+          const crt = new THREE.WebGLRenderTarget(W, H, { type: THREE.HalfFloatType, samples: 4 });
+          composer = new EffectComposer(renderer, crt);
           composer.setPixelRatio(1);
           composer.setSize(W, H);
           composer.addPass(new RenderPass(scene, camera));
-          composer.addPass(new UnrealBloomPass(new THREE.Vector2(W, H), 0.55, 0.5, 0.9));
+          composer.addPass(new UnrealBloomPass(new THREE.Vector2(W, H), 0.75, 0.6, 1.0));   // only HDR (> 1) values bloom
           composer.addPass(new OutputPass());
+          if (ShaderPass) {
+            grade = new ShaderPass({
+              uniforms: { tDiffuse: { value: null }, uFrame: { value: 0 }, uGrain: { value: 0.035 }, uVig: { value: 0.5 }, uAspect: { value: W / H } },
+              vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+              fragmentShader: `uniform sampler2D tDiffuse; uniform float uFrame, uGrain, uVig, uAspect; varying vec2 vUv;
+                float h(vec3 p){ p = fract(p * vec3(443.897, 441.423, 437.195)); p += dot(p, p.yzx + 19.19); return fract((p.x + p.y) * p.z); }
+                void main(){
+                  vec3 c = texture2D(tDiffuse, vUv).rgb;
+                  vec2 q = (vUv - 0.5) * vec2(1.0, 1.0 / uAspect) * 0.75; float v = smoothstep(1.0, 0.25, length(q)); c *= mix(1.0 - uVig, 1.0, v);
+                  float n = h(vec3(floor(vUv * vec2(1080.0, 1920.0) / 1.5), uFrame)) - 0.5;
+                  c += n * uGrain * (0.6 + 0.4 * (1.0 - dot(c, vec3(0.299, 0.587, 0.114))));
+                  gl_FragColor = vec4(c, 1.0); }`,
+            });
+            composer.addPass(grade);
+          }
         } catch (e) { console.error("[world] composer failed", e); composer = null; }
       }
 
@@ -157,108 +179,140 @@
       }
       const GLOW = glowTex(), SWIRL = swirlTex(), RING = ringTex();
 
-      // ------------------------------------------------------------------ the room
-      // A dark studio: stone tabletop under pools of light, a warm backlit backdrop, soft light shafts.
-      scene.add(new THREE.AmbientLight(0x9aa6b4, 0.35));
-      const key = new THREE.DirectionalLight(0xffd6a8, 1.25); key.position.set(3, 7, 5); scene.add(key);
-      const rim = new THREE.DirectionalLight(0x9fb8e0, 0.55); rim.position.set(-4, 5, -8); scene.add(rim);
-      const topSpot = new THREE.SpotLight(0xffe2bd, 18, 14, 0.62, 0.65, 1.6); topSpot.position.set(0, 7.5, 0.6); topSpot.target.position.set(0, 0, -0.1); scene.add(topSpot, topSpot.target);
+      // ------------------------------------------------------------------ the room (Look A: black-glass studio)
+      // After pmndrs/drei Lightformer + Environment, three's RoomEnvironment, drei Backdrop + ContactShadows, and the
+      // HyperFrames product-turntable block: softbox reflections on dark metal, a seamless cyclorama with a pool of
+      // light behind the hero, soft contact shadows instead of a mirror, out-of-focus bokeh instead of dust.
+      scene.add(new THREE.AmbientLight(0xb8c0d0, 0.05));
+      const key = new THREE.DirectionalLight(0xfff1e0, 0.9); key.position.set(-3, 6, 4); scene.add(key);
+      const rim = new THREE.DirectionalLight(0xffd9b0, 1.4); rim.position.set(4, 4, -6); scene.add(rim);
 
-      // backdrop: inside of a big sphere, vertical gradient with a warm glow low behind the table
-      const skyMat = new THREE.ShaderMaterial({
-        side: THREE.BackSide, depthWrite: false, fog: false,
-        uniforms: { uTop: { value: new THREE.Color(0x040509) }, uHor: { value: new THREE.Color(0x17110c) }, uGlow: { value: new THREE.Color(0x3c2410) }, uCool: { value: new THREE.Color(0x0d1a2b) } },
-        vertexShader: `varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-        fragmentShader: `uniform vec3 uTop, uHor, uGlow, uCool; varying vec3 vP;
+      // 1. lightformer environment: emissive panels rendered once into a PMREM env map (no HDRI file)
+      {
+        const env = new THREE.Scene();
+        env.background = new THREE.Color(0x050407);
+        const lf = (w, h, pos, color, intensity, form = "rect", target = [0, 1, 0]) => {
+          const geo = form === "ring" ? new THREE.RingGeometry(0.35, 0.5, 64) : form === "circle" ? new THREE.CircleGeometry(0.5, 64) : new THREE.PlaneGeometry(1, 1);
+          const mat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide, toneMapped: false });
+          mat.color.multiplyScalar(intensity);
+          const m = new THREE.Mesh(geo, mat); m.scale.set(w, h, 1); m.position.set(...pos); m.lookAt(...target); env.add(m);
+        };
+        lf(1.2, 8, [-5, 2, 3], 0xffffff, 6);            // tall key strip, left
+        lf(1.2, 8, [5, 2, -3], 0xffe6c8, 9);            // warm rim strip, back right
+        lf(8, 8, [0, 7, 0], 0xffffff, 1.2);             // soft ceiling
+        lf(3, 3, [-6, 1, -6], 0x2a6bff, 3, "ring");     // cool accent ring: a ring glint on the metal
+        lf(0.6, 6, [3.5, 2, 5], 0xffffff, 2.5);         // thin front-right strip for a second highlight line
+        const pmrem = new THREE.PMREMGenerator(renderer);
+        scene.environment = pmrem.fromScene(env, 0.04).texture;
+        scene.environmentIntensity = 1.0;
+      }
+
+      // 2. a stage: one big satin floor; pools of light under and behind the pots fall off into the void. With a
+      //    long lens looking down, the floor IS the background, so its light falloff does the job of a cyclorama.
+      {
+        const floorM = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({ color: 0x100e12, roughness: 0.5, metalness: 0.2, dithering: true, envMapIntensity: 0.35 }));
+        floorM.rotation.x = -Math.PI / 2; scene.add(floorM);
+      }
+      // light pools painted onto the floor (a baked, additive gradient): spotlights here put hot specular flashes on
+      // the glossy metal that bloom into blobs as the camera moves, so the pools carry no analytic light at all
+      {
+        const S2 = 1024, c = mkCanvas(S2, S2), g = c.getContext("2d");
+        const pool = (cx, cy, r, rgb, a) => { const gr = g.createRadialGradient(cx, cy, 0, cx, cy, r); gr.addColorStop(0, `rgba(${rgb},${a})`); gr.addColorStop(0.55, `rgba(${rgb},${a * 0.35})`); gr.addColorStop(1, `rgba(${rgb},0)`); g.fillStyle = gr; g.fillRect(0, 0, S2, S2); };
+        g.fillStyle = "#000"; g.fillRect(0, 0, S2, S2);
+        pool(S2 * 0.5, S2 * 0.36, S2 * 0.34, "255,150,80", 0.55);     // warm pool behind the pots
+        pool(S2 * 0.5, S2 * 0.52, S2 * 0.17, "255,236,214", 0.42);    // soft pool under the pots
+        const tex = texOf(c);
+        const poolM = new THREE.Mesh(new THREE.PlaneGeometry(24, 24), new THREE.MeshBasicMaterial({ map: tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.55 }));
+        poolM.rotation.x = -Math.PI / 2; poolM.position.set(0, 0.001, -0.5 + 24 * (0.52 - 0.5)); poolM.renderOrder = 0; scene.add(poolM);
+      }
+
+      // 3. contact shadows (port of drei ContactShadows / three webgl_shadow_contact): depth from below, blurred twice
+      const cshadow = (() => {
+        const size = 7, far = 1.4, res = 512, blur = 2.6;
+        const group = new THREE.Group(); group.position.y = 0.002;
+        const rt = new THREE.WebGLRenderTarget(res, res), rtB = new THREE.WebGLRenderTarget(res, res);
+        rt.texture.generateMipmaps = rtB.texture.generateMipmaps = false;
+        const geo = new THREE.PlaneGeometry(size, size).rotateX(Math.PI / 2);
+        const plane = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: rt.texture, transparent: true, opacity: 0.85, depthWrite: false }));
+        plane.scale.y = -1; plane.renderOrder = 1; group.add(plane);
+        const blurPlane = new THREE.Mesh(geo); blurPlane.visible = false; group.add(blurPlane);
+        const cam = new THREE.OrthographicCamera(-size / 2, size / 2, size / 2, -size / 2, 0, far); cam.rotation.x = Math.PI / 2; group.add(cam);
+        const depthMat = new THREE.MeshDepthMaterial(); depthMat.depthTest = depthMat.depthWrite = false;
+        depthMat.onBeforeCompile = (s) => { s.fragmentShader = s.fragmentShader.replace("vec4( vec3( 1.0 - fragCoordZ ), opacity );", "vec4( vec3( 0.0 ), ( 1.0 - fragCoordZ ) * 1.0 );"); };
+        const hB = new THREE.ShaderMaterial(HorizontalBlurShader), vB = new THREE.ShaderMaterial(VerticalBlurShader);
+        hB.depthTest = vB.depthTest = false;
+        const blurOnce = (amt) => {
+          blurPlane.visible = true;
+          blurPlane.material = hB; hB.uniforms.tDiffuse.value = rt.texture; hB.uniforms.h.value = amt / 256;
+          renderer.setRenderTarget(rtB); renderer.render(blurPlane, cam);
+          blurPlane.material = vB; vB.uniforms.tDiffuse.value = rtB.texture; vB.uniforms.v.value = amt / 256;
+          renderer.setRenderTarget(rt); renderer.render(blurPlane, cam);
+          blurPlane.visible = false;
+        };
+        const hidden = [];   // particles, glows, orbs and labels must not cast shadow blobs
+        group.hideDuringShadow = (o) => hidden.push(o);
+        group.update = () => {
+          const bg = scene.background, fog = scene.fog;
+          const skip = [];   // only solid geometry casts: hide sprites, points, additive and transparent things
+          scene.traverse((o) => { if (o.visible && o !== group && (o.isSprite || o.isPoints || (o.material && (o.material.transparent || o.material.blending === THREE.AdditiveBlending)))) skip.push(o); });
+          const vis = skip.map((o) => o.visible);
+          scene.background = null; scene.fog = null; plane.visible = false; skip.forEach((o) => (o.visible = false));
+          scene.overrideMaterial = depthMat;
+          const cc = renderer.getClearColor(new THREE.Color()), ca = renderer.getClearAlpha();
+          renderer.setRenderTarget(rt); renderer.setClearColor(0x000000, 0); renderer.clear(); renderer.render(scene, cam);
+          scene.overrideMaterial = null; blurOnce(blur); blurOnce(blur * 0.4);
+          renderer.setRenderTarget(null); renderer.setClearColor(cc, ca);
+          plane.visible = true; scene.background = bg; scene.fog = fog; skip.forEach((o, k) => (o.visible = vis[k]));
+        };
+        scene.add(group);
+        return group;
+      })();
+
+      // 4. fake bokeh instead of dust: seeded hexagon discs behind the set, size from a thin-lens circle of confusion
+      const BOKEH = 34, bR = mulberry32(9), bPos = [], bCol = [], bSeed = [];
+      const bokehPal = [[1.0, 0.72, 0.42], [1.0, 0.82, 0.6], [0.45, 0.62, 1.0], [0.35, 0.95, 0.85], [1.0, 0.55, 0.2]];
+      for (let k = 0; k < BOKEH; k++) {
+        if (k < 24) bPos.push((bR() - 0.5) * 20, 0.3 + bR() * 2.2, -8 - bR() * 10);      // far: out of focus behind the set
+        else bPos.push((bR() < 0.5 ? -1 : 1) * (1.6 + bR() * 1.4), 2.6 + bR() * 2.2, 6.5 + bR() * 2.5);   // near: big soft discs at the frame edges
+        const c = bokehPal[Math.floor(bR() * bokehPal.length)]; bCol.push(...c); bSeed.push(bR() * 6.28);
+      }
+      const bGeo = new THREE.BufferGeometry();
+      bGeo.setAttribute("position", new THREE.Float32BufferAttribute(bPos, 3));
+      bGeo.setAttribute("color", new THREE.Float32BufferAttribute(bCol, 3));
+      bGeo.setAttribute("seed", new THREE.Float32BufferAttribute(bSeed, 1));
+      const bokehMat = new THREE.ShaderMaterial({
+        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: true, toneMapped: false, fog: false,
+        uniforms: { uT: { value: 0 }, uFocus: { value: 6.5 }, uScale: { value: 1920 } },
+        vertexShader: `attribute float seed; uniform float uT, uFocus, uScale; varying vec3 vC; varying float vA;
           void main(){
-            float h = clamp(vP.y * 1.4, 0.0, 1.0);
-            vec3 c = mix(uHor, uTop, smoothstep(0.0, 1.0, h));
-            float back = clamp(-vP.z, 0.0, 1.0);
-            float gy = (vP.y - 0.06) / 0.2, gx = vP.x / 0.5;
-            float glow = exp(-gy * gy) * exp(-gx * gx) * back * smoothstep(0.0, 0.14, vP.y);   // x*x, never pow() of a negative (NaN)
-            c += uGlow * glow * 0.75;
-            c = mix(c, uCool, clamp(-vP.x, 0.0, 1.0) * 0.35 * (1.0 - h * 0.5));
-            gl_FragColor = vec4(c, 1.0);
-            #include <colorspace_fragment>
-          }`,
+            vec3 p = position + vec3(sin(uT * 0.11 + seed) * 0.25, sin(uT * 0.07 + seed * 1.7) * 0.18, 0.0);
+            vec4 mv = modelViewMatrix * vec4(p, 1.0); float d = -mv.z;
+            float coc = clamp(abs(d - uFocus) / d * 0.9, 0.02, 0.6);
+            gl_PointSize = clamp(coc * uScale * 0.16, 6.0, 150.0);
+            vA = clamp(1600.0 / (gl_PointSize * gl_PointSize), 0.04, 0.55) * (0.6 + 0.4 * sin(uT * 0.5 + seed * 3.0));
+            vC = color; gl_Position = projectionMatrix * mv; }`,
+        fragmentShader: `varying vec3 vC; varying float vA;
+          void main(){
+            vec2 q = gl_PointCoord * 2.0 - 1.0;
+            float r = length(q);
+            float m = smoothstep(1.0, 0.55, r);                                        // soft round disc
+            float rimL = smoothstep(0.6, 0.92, r) * smoothstep(1.0, 0.9, r) * 0.6;    // faint lens rim
+            gl_FragColor = vec4(vC * (0.7 * m + 0.6 * rimL) * vA, 1.0); }`,
       });
-      scene.add(new THREE.Mesh(new THREE.SphereGeometry(60, 48, 32), skyMat));
-
-      if (Reflector) {
-        const mirror = new Reflector(new THREE.CircleGeometry(5.5, 64), { textureWidth: 540, textureHeight: 960, color: 0x3e3b38, clipBias: 0.003 });
-        mirror.rotation.x = -Math.PI / 2; scene.add(mirror);
-      }
-      // stone tabletop: soft marble veining, fading into the dark at its edge
-      function stoneTex() {
-        const S = 1024, c = mkCanvas(S, S), g = c.getContext("2d"), r = mulberry32(77);
-        g.fillStyle = "#0d0c0b"; g.fillRect(0, 0, S, S);
-        for (let k = 0; k < 1800; k++) {
-          const x = r() * S, y = r() * S, rr = 30 + r() * 140, gr = g.createRadialGradient(x, y, 0, x, y, rr), v = 14 + r() * 14;
-          gr.addColorStop(0, `rgba(${v + 8},${v + 5},${v},0.05)`); gr.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = gr; g.fillRect(x - rr, y - rr, rr * 2, rr * 2);
-        }
-        g.lineCap = "round";
-        for (let k = 0; k < 22; k++) {
-          let x = r() * S, y = r() * S, a = r() * Math.PI * 2;
-          g.strokeStyle = `rgba(190,170,140,${0.035 + r() * 0.05})`; g.lineWidth = 0.6 + r() * 1.8; g.beginPath(); g.moveTo(x, y);
-          for (let k2 = 0; k2 < 60; k2++) { a += (r() - 0.5) * 0.5; x += Math.cos(a) * 9; y += Math.sin(a) * 9; g.lineTo(x, y); }
-          g.stroke();
-        }
-        const t = texOf(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
-      }
-      function edgeFade() {
-        const S = 512, c = mkCanvas(S, S), g = c.getContext("2d");
-        const gr = g.createRadialGradient(S / 2, S / 2, S * 0.18, S / 2, S / 2, S / 2);
-        gr.addColorStop(0, "#fff"); gr.addColorStop(0.62, "#9a9a9a"); gr.addColorStop(1, "#000");
-        g.fillStyle = gr; g.fillRect(0, 0, S, S); return new THREE.CanvasTexture(c);
-      }
-      const table = new THREE.Mesh(new THREE.CircleGeometry(16, 96), new THREE.MeshStandardMaterial({ map: stoneTex(), alphaMap: edgeFade(), transparent: true, opacity: Reflector ? 0.9 : 1, roughness: 0.42, metalness: 0.15, color: 0x7a7068 }));
-      table.material.map.repeat.set(4, 4);
-      table.rotation.x = -Math.PI / 2; table.position.y = 0.002; scene.add(table);
-
-      // light shafts: faint additive cones from above
-      function shaftTex() {
-        const S = 256, c = mkCanvas(S, S), g = c.getContext("2d");
-        const gr = g.createLinearGradient(0, 0, 0, S); gr.addColorStop(0, "rgba(255,255,255,0.0)"); gr.addColorStop(0.25, "rgba(255,255,255,0.55)"); gr.addColorStop(1, "rgba(255,255,255,0.0)");
-        g.fillStyle = gr; g.fillRect(0, 0, S, S);
-        const gx = g.createLinearGradient(0, 0, S, 0); gx.addColorStop(0, "rgba(0,0,0,1)"); gx.addColorStop(0.5, "rgba(0,0,0,0)"); gx.addColorStop(1, "rgba(0,0,0,1)");
-        g.globalCompositeOperation = "destination-out"; g.fillStyle = gx; g.fillRect(0, 0, S, S);
-        return texOf(c);
-      }
-      // backlight: a big soft warm halo behind the table, so the pots read as silhouettes against light
-      const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: 0xffb36b, transparent: true, opacity: 0.22, depthWrite: false, fog: false, blending: THREE.AdditiveBlending, toneMapped: false }));
-      halo.scale.set(11, 6.5, 1); halo.position.set(0, 1.4, -5.5); scene.add(halo);
-      const SHAFT = shaftTex(), shafts = [];
-      for (const [x, z, rot, op] of []) {
-        const m = new THREE.Mesh(new THREE.ConeGeometry(1.25, 7, 48, 1, true), new THREE.MeshBasicMaterial({ map: SHAFT, color: 0xffd9a8, transparent: true, opacity: op, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, toneMapped: false }));
-        m.position.set(x, 3.5, z); m.rotation.z = rot; m.userData.op = op; scene.add(m); shafts.push(m);
-      }
-
-      // dust: small soft round motes in the light, shrunk near the camera so they never become blobs
-      const DUST = 260, dR = mulberry32(5), dPos = [];
-      const dustMat = new THREE.MeshBasicMaterial({ map: GLOW, color: 0xffe2b8, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
-      const dust = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.03, 0.03), dustMat, DUST);
-      for (let k = 0; k < DUST; k++) dPos.push([(dR() - 0.5) * 6, dR() * 4, (dR() - 0.5) * 6 - 0.5, dR() * 6.28]);
-      scene.add(dust);
-      const m4 = new THREE.Matrix4(), dScale = V(1, 1, 1), dP = V(0, 0, 0);
-      function updateDust(t) {
-        for (let k = 0; k < DUST; k++) {
-          const p = dPos[k];
-          dP.set(p[0] + Math.sin(t * 0.15 + p[3]) * 0.3, (p[1] + t * 0.04) % 4, p[2]);
-          const near = cl((dP.distanceTo(camera.position) - 0.9) / 1.2);
-          dScale.setScalar(Math.max(near, 0.0001));
-          m4.compose(dP, camera.quaternion, dScale); dust.setMatrixAt(k, m4);
-        }
-        dust.instanceMatrix.needsUpdate = true;
-      }
+      const bokeh = new THREE.Points(bGeo, bokehMat); scene.add(bokeh);
+      cshadow.hideDuringShadow(bokeh);
+      const shafts = [];
+      function updateDust(t) { bokehMat.uniforms.uT.value = t; bokehMat.uniforms.uFocus.value = camera.position.distanceTo(camLook); }
 
       // ------------------------------------------------------------------ HERO (replace with your recurring object)
-      const heroMat = new THREE.MeshStandardMaterial({ color: 0x161b22, roughness: 0.3, metalness: 0.8 });
-      const hero = new THREE.Mesh(new THREE.TorusKnotGeometry(0.45, 0.14, 160, 24), heroMat);
+      const heroMat = new THREE.MeshPhysicalMaterial({ color: 0x1a1a1f, roughness: 0.28, metalness: 1.0, clearcoat: 0.6, clearcoatRoughness: 0.15 });
+      const hero = new THREE.Mesh(new THREE.TorusKnotGeometry(0.45, 0.14, 200, 32), heroMat);
       hero.position.set(0, 0.9, 0); scene.add(hero);
-      const heroGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: COL.amber, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
-      heroGlow.scale.set(2.4, 2.4, 1); heroGlow.position.copy(hero.position); scene.add(heroGlow);
-      const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.54, 0.32, 48), new THREE.MeshStandardMaterial({ color: 0x0f1318, roughness: 0.5, metalness: 0.6 }));
+      const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.54, 0.32, 64), new THREE.MeshPhysicalMaterial({ color: 0x141418, roughness: 0.45, metalness: 0.6, clearcoat: 0.3 }));
       ped.position.set(0, 0.16, 0); scene.add(ped);
+      // something that glows: values above 1 with toneMapped:false are what the bloom picks up
+      const core = new THREE.Mesh(new THREE.SphereGeometry(0.09, 32, 16), new THREE.MeshBasicMaterial({ color: new THREE.Color(1.0, 0.6, 0.2).multiplyScalar(3), toneMapped: false }));
+      core.position.set(0, 1.7, 0); scene.add(core);
 
       // labels: DOM text placed from 3D anchors (in the render loop), kept inside the stage zone, never overlapping
       const labelsRoot = document.getElementById("world-labels");
@@ -292,7 +346,6 @@
         }
       }
 
-      // ------------------------------------------------------------------ camera
       // camera: tools/gen.py samples a C1-continuous spline at 30 fps; play it back exactly
       const PATH = CFG.camPath, FPS = CFG.fps;
       const camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
@@ -302,6 +355,7 @@
         camPos.set(lerp(a[0], b[0], u), lerp(a[1], b[1], u), lerp(a[2], b[2], u));
         camLook.set(lerp(a[3], b[3], u), lerp(a[4], b[4], u), lerp(a[5], b[5], u));
         camera.position.copy(camPos); camera.lookAt(camLook);
+        if (a.length > 6) { const fov = lerp(a[6], b[6], u); if (Math.abs(fov - camera.fov) > 1e-4) { camera.fov = fov; camera.updateProjectionMatrix(); } }   // zoom
       }
 
       // ------------------------------------------------------------------ render
@@ -309,15 +363,16 @@
         cameraAt(t);
         updateDust(t);
         // ---- your story states: every value is a function of t (ramp/eio on anchors), never of the previous frame
-        const A = CFG.anchors || {};
         hero.rotation.y = t * 0.35;
-        heroGlow.material.opacity = 0.25 + 0.15 * Math.sin(t * 1.3);
+        core.position.y = 1.7 + Math.sin(t * 1.3) * 0.05;
         // ---- labels: DOM text from 3D anchors, clamped into the stage, collision-free
         placeLabels([
           { id: "hero", text: "the recurring object", at: V(0, 0.0, 0.55), dy: 34, op: ramp(t, 0.5, 0.5), pri: 2 },
-          { id: "value", text: "42", color: "#ffd0a0", at: V(0, 1.6, 0), dy: -10, op: ramp(t, 2, 0.4), pri: 3 },
+          { id: "value", text: "42", color: "#ffd0a0", at: V(0, 1.7, 0), dy: -40, op: ramp(t, 2, 0.4), pri: 3 },
         ]);
-        if (composer) composer.render(); else renderer.render(scene, camera);
+        cshadow.update();
+        if (grade) grade.uniforms.uFrame.value = Math.round(t * 30);
+        if (composer) composer.render(0); else renderer.render(scene, camera);
       };
       host.render(host.clock.t);
       host.ready();

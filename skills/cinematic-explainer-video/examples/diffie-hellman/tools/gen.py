@@ -49,23 +49,27 @@ A = {
 FPS = 30
 CAM_KEYS = [
     # t, position, look-at
-    (0.0,                   [0.45, 3.05, 7.05],  [0.0, -0.15, -0.35]),
-    (A["reset"] + 0.6,      [-0.25, 2.95, 6.65], [0.0, -0.1, -0.35]),
-    (A["mxYellow"],         [0.0, 2.85, 6.35],   [0.0, -0.05, -0.4]),
-    (A["mxRed"] + 0.3,      [-0.3, 2.8, 6.2],  [-0.1, -0.05, -0.3]),
-    (A["mxBlue"] + 0.3,     [0.3, 2.8, 6.2],   [0.1, -0.05, -0.3]),
-    (A["mxSwap"] + 1.1,     [0.0, 3.6, 6.75],    [0.0, -0.2, -0.35]),
-    (A["maAdds"] + 0.4,     [-0.15, 2.9, 6.25],  [0.0, -0.05, -0.2]),
-    (A["maKey"] - 0.5,      [0.1, 2.85, 5.95],   [0.0, -0.02, -0.2]),
-    (A["spMix"] + 0.5,      [0.0, 2.6, 2.6],    [0.0, 0.22, -1.25]),
-    (A["spMud"] - 0.2,      [0.0, 2.7, 2.35],   [0.0, 0.2, -1.25]),
-    (A["spDouble"] + 0.4,   [0.0, 3.0, 4.15],    [0.0, 0.05, -0.9]),
-    (A["twStart"] + 1.4,    [0.0, 2.6, 1.0],    [0.0, 0.1, -1.3]),
-    (A["endStart"] - 0.4,   [0.08, 2.6, 0.75],  [0.0, 0.1, -1.3]),
-    (A["endStart"] + 3.6,   [-0.3, 3.0, 6.65],   [0.0, -0.1, -0.35]),
-    (TOTAL,                 [0.1, 3.1, 7.05],    [0.0, -0.12, -0.35]),
+    (0.0,                   [0.82, 5.67, 13.12],  [0.0, -0.5, -0.35]),
+    (A["reset"] + 0.6,      [-0.46, 5.45, 12.39], [0.0, -0.45, -0.35]),
+    (A["mxYellow"],         [0.0, 5.23, 11.88],   [0.0, -0.4, -0.4]),
+    (A["mxRed"] + 0.3,      [-0.46, 5.14, 11.53],  [-0.1, -0.4, -0.3]),
+    (A["mxBlue"] + 0.3,     [0.46, 5.14, 11.53],   [0.1, -0.4, -0.3]),
+    (A["mxSwap"] + 1.1,     [0.0, 6.72, 12.57],    [0.0, -0.55, -0.35]),
+    (A["maAdds"] + 0.4,     [-0.27, 5.32, 11.54],  [0.0, -0.4, -0.2]),
+    (A["maKey"] - 0.5,      [0.18, 5.2, 10.99],   [0.0, -0.37, -0.2]),
+    (A["spMix"] + 0.5,      [0.0, 5.6, 11.2],     [0.0, 0.45, -1.25]),
+    (A["spMud"] - 0.2,      [0.05, 5.65, 11.1],   [0.0, 0.45, -1.25]),
+    (A["spDouble"] + 0.4,   [0.0, 5.5, 11.3],     [0.0, 0.2, -0.9]),
+    (A["twStart"] + 1.4,    [0.0, 5.7, 11.1],     [0.0, 0.5, -1.3]),
+    (A["endStart"] - 0.4,   [0.08, 5.7, 11.0],    [0.0, 0.5, -1.3]),
+    (A["endStart"] + 3.6,   [-0.55, 5.54, 12.39],   [0.0, -0.45, -0.35]),
+    (TOTAL,                 [0.18, 5.74, 13.12],    [0.0, -0.47, -0.35]),
 ]
-MAX_SPEED, MAX_TURN = 2.6, 30.0   # world units per second, degrees per second
+FOV_KEYS = [
+    (0.0, 30.0), (A["maKey"] - 0.5, 30.0), (A["spMix"] + 0.5, 13.0), (A["spMud"] - 0.2, 12.5), (A["spDouble"] + 0.4, 19.0),
+    (A["twStart"] + 1.4, 10.5), (A["endStart"] - 0.4, 10.0), (A["endStart"] + 3.6, 30.0), (TOTAL, 30.0),
+]
+MAX_SPEED, MAX_TURN = 4.8, 30.0   # 30-degree lens: the camera stands ~1.8x further back   # world units per second, degrees per second
 
 def _hermite_path(keys, total, fps):
     ts = [k[0] for k in keys]
@@ -106,6 +110,8 @@ def _camera_report(path):
     return wv, tv, ww, tw
 
 CAM_PATH = _hermite_path(CAM_KEYS, TOTAL, FPS)
+_fov = _hermite_path([(t, [f, 0, 0], [0, 0, 0]) for t, f in FOV_KEYS], TOTAL, FPS)
+CAM_PATH = [row + [round(f[0], 3)] for row, f in zip(CAM_PATH, _fov)]   # 7th value: vertical FOV in degrees
 _v, _tv, _w, _tw = _camera_report(CAM_PATH)
 print(f"camera: max speed {_v:.2f} u/s at {_tv:.2f}s, max turn {_w:.1f} deg/s at {_tw:.2f}s")
 if _v > MAX_SPEED or _w > MAX_TURN:
